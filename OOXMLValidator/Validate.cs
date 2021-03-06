@@ -29,6 +29,10 @@ namespace OOXMLValidator
             {
                 throw new ArgumentException("file must be a .docx, .xlsx, or .pptx");
             }
+            if (!File.Exists(fileName))
+            {
+                throw new FileNotFoundException();
+            }
             dynamic doc = null;
             switch (fileExtension)
             {
