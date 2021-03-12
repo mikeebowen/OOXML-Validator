@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OOXMLValidatorCLI": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\\\source\\\\test\\\\ATE-4761-copy.docx"
+    }
+  }
+}

@@ -18,8 +18,13 @@ namespace OOXMLValidator
             Office2016,
             Office2019
         }
-        public static IEnumerable<ValidationErrorInfo> OOXML(string fileName, FormatVersion? format)
+        public static IEnumerable<ValidationErrorInfo> OOXML(string fileName, int? format)
         {
+            int defaultFormatVersion = Enum.GetNames(typeof(FormatVersion)).Length - 1;
+            if (format != null && (format < 0 || format > defaultFormatVersion))
+            {
+                throw new ArgumentOutOfRangeException("Office version must be 0 = Office 2007, 1 = Office 2010, 2 = Office 2013, 3 = Office 2016, 4 = Office 2019");
+            }
             if (fileName == null)
             {
                 throw new ArgumentNullException();
@@ -49,7 +54,9 @@ namespace OOXMLValidator
                     break;
             }
             dynamic ffv;
-            switch (format)
+            int num = format ?? defaultFormatVersion;
+            FormatVersion fv = (FormatVersion)num;
+            switch (fv)
             {
                 case FormatVersion.Office2007:
                     ffv = FileFormatVersions.Office2007;
