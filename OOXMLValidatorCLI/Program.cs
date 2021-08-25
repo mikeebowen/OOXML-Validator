@@ -1,6 +1,9 @@
 ﻿using DocumentFormat.OpenXml.Validation;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OOXMLValidator;
+using OOXMLValidator.Classes;
+using OOXMLValidator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -10,30 +13,25 @@ namespace OOXMLValidatorCLI
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            // set up DI
+            var collection = new ServiceCollection();
+            collection.AddScoped<IValidate, OOXMLValidator.Classes.Validate>();
+            collection.AddScoped<IFunctionUtils, FunctionUtils>();
+            collection.AddScoped<IDocument, Document>();
+            var serviceProvider = collection.BuildServiceProvider();
+
             int? version = null;
             if (1 < args.Length && args[1] != null && int.TryParse(args[1], out int v))
             {
                 version = v;
             }
-            IEnumerable<ValidationErrorInfo> errors = Validate.OOXML(args[0], version);
-            List<dynamic> res = new List<dynamic>();
-            foreach (ValidationErrorInfo validationErrorInfo in errors)
-            {
-                dynamic dyno = new ExpandoObject();
-                dyno.Description = validationErrorInfo.Description;
-                dyno.Path = validationErrorInfo.Path;
-                dyno.Id = validationErrorInfo.Id;
-                dyno.ErrorType = validationErrorInfo.ErrorType;
-                res.Add(dyno);
-            }
-            var json = JsonConvert.SerializeObject(res, Formatting.None,
-                        new JsonSerializerSettings()
-                        {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        });
-            Console.WriteLine(json);
+
+            var validate = serviceProvider.GetService<IValidate>();
+            string json = validate.OOXML(args[0], version);
+
+            Console.Write(json);
         }
     }
 }
