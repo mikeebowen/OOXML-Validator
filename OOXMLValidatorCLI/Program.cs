@@ -1,9 +1,9 @@
 ﻿using DocumentFormat.OpenXml.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using OOXMLValidator;
-using OOXMLValidator.Classes;
-using OOXMLValidator.Interfaces;
+using OOXMLValidatorCLI;
+using OOXMLValidatorCLI.Classes;
+using OOXMLValidatorCLI.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -17,7 +17,7 @@ namespace OOXMLValidatorCLI
         {
             // set up DI
             var collection = new ServiceCollection();
-            collection.AddScoped<IValidate, OOXMLValidator.Classes.Validate>();
+            collection.AddScoped<IValidate, Validate>();
             collection.AddScoped<IFunctionUtils, FunctionUtils>();
             collection.AddScoped<IDocument, Document>();
             var serviceProvider = collection.BuildServiceProvider();
