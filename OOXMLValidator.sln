@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OOXMLValidatorCLI", "OOXMLValidatorCLI\OOXMLValidatorCLI.csproj", "{992EF2AC-EDE5-4418-9584-E077999FD15E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OOXMLValidatorCLITests", "OOXMLValidatorCLITests\OOXMLValidatorCLITests.csproj", "{F5C0C69F-A8A2-4612-A2EE-3A15565C8FA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{992EF2AC-EDE5-4418-9584-E077999FD15E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{992EF2AC-EDE5-4418-9584-E077999FD15E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{992EF2AC-EDE5-4418-9584-E077999FD15E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5C0C69F-A8A2-4612-A2EE-3A15565C8FA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C0C69F-A8A2-4612-A2EE-3A15565C8FA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C0C69F-A8A2-4612-A2EE-3A15565C8FA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C0C69F-A8A2-4612-A2EE-3A15565C8FA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
