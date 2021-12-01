@@ -1,8 +1,10 @@
+[![Test and Release](https://github.com/mikeebowen/OOXML-Validator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/mikeebowen/OOXML-Validator/actions/workflows/dotnet.yml)
+
 # OOXML-Validator
 
 ## What is it?
 
-The OOXML Validator is a .NET package for validating Open Office XML files (.docx, .pptx, .xlsx). 
+The OOXML Validator is a .NET CLI package for validating Open Office XML files (.docx, .pptx, .xlsx). 
 
 ## How is it used?
 
@@ -35,6 +37,7 @@ enum FormatVersion
     Office2010,
     Office2013,
     Office2016,
-    Office2019
+    Office2019,
+    Office2021
 }
 ```

@@ -122,7 +122,7 @@ namespace OOXMLValidatorCLITests
 
             functionUtils.SetOfficeVersion(null);
 
-            Assert.AreEqual(functionUtils.OfficeVersion, FileFormatVersions.Office2019);
+            Assert.AreEqual(functionUtils.OfficeVersion, Enum.GetValues(typeof(FileFormatVersions)).Cast<FileFormatVersions>().Last());
         }
 
         [TestMethod]

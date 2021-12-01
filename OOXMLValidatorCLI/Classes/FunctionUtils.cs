@@ -63,14 +63,14 @@ namespace OOXMLValidatorCLI.Classes
         {
             if (version != null && !Enum.IsDefined(typeof(FileFormatVersions), version))
             {
-                throw new ArgumentOutOfRangeException("Office version must be 1 = Office 2007, 2 = Office 2010, 4 = Office 2013, 8 = Office 2016, 16 = Office 2019");
+                throw new ArgumentOutOfRangeException("Office version must be 1 = Office 2007, 2 = Office 2010, 4 = Office 2013, 8 = Office 2016, 16 = Office 2019, 32 = Office 2021");
             }
 
             if (version != null && Enum.IsDefined(typeof(FileFormatVersions), version))
             {
                 _fileFormatVersions = (FileFormatVersions)(version);
             }
-            
+
             if (version == null)
             {
                 FileFormatVersions currentVersion = Enum.GetValues(typeof(FileFormatVersions)).Cast<FileFormatVersions>().Last();
