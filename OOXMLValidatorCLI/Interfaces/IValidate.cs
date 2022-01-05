@@ -7,6 +7,6 @@ namespace OOXMLValidatorCLI.Interfaces
 {
     public interface IValidate
     {
-        string OOXML(string filePath, int? format);
+        string OOXML(string filePath, string format);
     }
 }

@@ -15,7 +15,7 @@ namespace OOXMLValidatorCLI.Classes
         {
             _functionUtils = functionUtils;
         }
-        public string OOXML(string filePath, int? format)
+        public string OOXML(string filePath, string format)
         {
             _functionUtils.SetOfficeVersion(format);
 

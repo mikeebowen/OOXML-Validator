@@ -27,17 +27,47 @@ A string representing the absolute path to the OOXML file to validate
 The `OOXMLValidator.FormatVersion` to use for validation
 ##### Returns
 `IEnumerable<ValidationErrorInfo>`
-### OOXMLValidator.FormatVersion Enum
+### DocumentFormat.OpenXml.FormatVersion Enum
 An enum representing the version of office to validate against
 #### FormatVersion
 ```csharp
-enum FormatVersion
+//
+// Summary:
+//     Defines the Office Open XML file format version.
+[Flags]
+public enum FileFormatVersions
 {
-    Office2007,
-    Office2010,
-    Office2013,
-    Office2016,
-    Office2019,
-    Office2021
+    //
+    // Summary:
+    //     Represents an invalid value which will cause an exception.
+    None = 0x0,
+    //
+    // Summary:
+    //     Represents Microsoft Office 2007.
+    Office2007 = 0x1,
+    //
+    // Summary:
+    //     Represents Microsoft Office 2010.
+    Office2010 = 0x2,
+    //
+    // Summary:
+    //     Represents Microsoft Office 2013.
+    Office2013 = 0x4,
+    //
+    // Summary:
+    //     Represents Microsoft Office 2016.
+    Office2016 = 0x8,
+    //
+    // Summary:
+    //     Represents Microsoft Office 2019.
+    Office2019 = 0x10,
+    //
+    // Summary:
+    //     Represents Microsoft Office 2021.
+    Office2021 = 0x20,
+    //
+    // Summary:
+    //     Represents Microsoft 365.
+    Microsoft365 = 0x40000000
 }
 ```

@@ -22,14 +22,8 @@ namespace OOXMLValidatorCLI
             collection.AddScoped<IDocument, Document>();
             var serviceProvider = collection.BuildServiceProvider();
 
-            int? version = null;
-            if (1 < args.Length && args[1] != null && int.TryParse(args[1], out int v))
-            {
-                version = v;
-            }
-
             var validate = serviceProvider.GetService<IValidate>();
-            string json = validate.OOXML(args[0], version);
+            string json = validate.OOXML(args[0], args[1]);
 
             Console.Write(json);
         }

@@ -10,7 +10,7 @@ namespace OOXMLValidatorCLI.Interfaces
     public interface IFunctionUtils
     {
         FileFormatVersions OfficeVersion { get; }
-        void SetOfficeVersion(int? version);
+        void SetOfficeVersion(string version);
         dynamic GetDocument(string filePath);
         IEnumerable<ValidationErrorInfo> GetValidationErrors(dynamic doc);
         string GetValidationErrorsJson(IEnumerable<ValidationErrorInfo> validationErrors);

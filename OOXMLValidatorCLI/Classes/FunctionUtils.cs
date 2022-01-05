@@ -59,11 +59,11 @@ namespace OOXMLValidatorCLI.Classes
             return doc;
         }
 
-        public void SetOfficeVersion(int? version)
+        public void SetOfficeVersion(string v)
         {
-            if (version != null && Enum.IsDefined(typeof(FileFormatVersions), version))
+            if (v != null && Enum.TryParse(v, out FileFormatVersions version))
             {
-                _fileFormatVersions = (FileFormatVersions)(version);
+                _fileFormatVersions = version;
             }
             else
             {
