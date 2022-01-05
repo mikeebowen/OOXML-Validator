@@ -95,21 +95,12 @@ namespace OOXMLValidatorCLITests
         }
 
         [TestMethod]
-        public void SetOfficeVersion_ShouldThrowAnErrorWithInvalidVersion()
-        {
-            var documentMock = Mock.Of<IDocument>();
-            FunctionUtils functionUtils = new FunctionUtils(documentMock);
-
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => functionUtils.SetOfficeVersion(99));
-        }
-
-        [TestMethod]
         public void SetOfficeVersion_ShouldSetValidVersion()
         {
             var documentMock = Mock.Of<IDocument>();
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
-            functionUtils.SetOfficeVersion(8);
+            functionUtils.SetOfficeVersion("Office2016");
 
             Assert.AreEqual(functionUtils.OfficeVersion, FileFormatVersions.Office2016);
         }

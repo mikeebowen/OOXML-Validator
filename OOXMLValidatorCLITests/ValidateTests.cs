@@ -19,7 +19,7 @@ namespace OOXMLValidatorCLITests
             var functionUtilsMock = Mock.Of<IFunctionUtils>();
             var validate = new Validate(functionUtilsMock);
             string testPath = "path/to/a/file.docx";
-            int testFormat = 8;
+            string testFormat = "Office2016";
             dynamic testDynamic = new ExpandoObject();
             testDynamic.Foo = "Bar";
             var validationErrorInfos = new ValidationErrorInfo[] { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
