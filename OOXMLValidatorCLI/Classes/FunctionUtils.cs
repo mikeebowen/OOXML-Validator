@@ -1,14 +1,14 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Validation;
-using Newtonsoft.Json;
-using OOXMLValidatorCLI.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Validation;
+using Newtonsoft.Json;
+using OOXMLValidatorCLI.Interfaces;
 
 namespace OOXMLValidatorCLI.Classes
 {
@@ -34,9 +34,9 @@ namespace OOXMLValidatorCLI.Classes
         {
             string fileExtension = filePath.Substring(Math.Max(0, filePath.Length - 4)).ToLower();
 
-            if (!new string[] { "docx", "pptx", "xlsx" }.Contains(fileExtension))
+            if (!new string[] { "docx", "docm", "dotm", "dotx", "pptx", "pptm", "potm", "potx", "ppam", "ppsm", "ppsx", "xlsx", "xlsm", "xltm", "xltx", "xlam" }.Contains(fileExtension))
             {
-                throw new ArgumentException("file must be a .docx, .xlsx, or .pptx");
+                throw new ArgumentException("file must be a .docx, .docm, .dotm, .dotx, .pptx, .pptm, .potm, .potx, .ppam, .ppsm, .ppsx, .xlsx, .xlsm, .xltm, .xltx, or .xlam");
             }
 
             dynamic doc = null;
@@ -44,12 +44,25 @@ namespace OOXMLValidatorCLI.Classes
             switch (fileExtension)
             {
                 case "docx":
+                case "docm":
+                case "dotm":
+                case "dotx":
                     doc = _document.OpenWordprocessingDocument(filePath);
                     break;
                 case "pptx":
+                case "pptm":
+                case "potm":
+                case "potx":
+                case "ppam":
+                case "ppsm":
+                case "ppsx":
                     doc = _document.OpenPresentationDocument(filePath);
                     break;
                 case "xlsx":
+                case "xlsm":
+                case "xltm":
+                case "xltx":
+                case "xlam":
                     doc = _document.OpenSpreadsheetDocument(filePath);
                     break;
                 default:

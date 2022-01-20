@@ -4,7 +4,7 @@
 
 ## What is it?
 
-The OOXML Validator is a .NET CLI package for validating Open Office XML files (.docx, .pptx, .xlsx). 
+The OOXML Validator is a .NET CLI package for validating Open Office XML files (.docx, .docm, .dotm, .dotx, .pptx, .pptm, .potm, .potx, .ppam, .ppsm, .ppsx, .xlsx, .xlsm, .xltm, .xltx, or .xlam).
 
 ## How is it used?
 
