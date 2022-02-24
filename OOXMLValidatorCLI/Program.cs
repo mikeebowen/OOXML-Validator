@@ -1,13 +1,13 @@
-﻿using DocumentFormat.OpenXml.Validation;
+﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using DocumentFormat.OpenXml.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OOXMLValidatorCLI;
 using OOXMLValidatorCLI.Classes;
 using OOXMLValidatorCLI.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 
 namespace OOXMLValidatorCLI
 {
@@ -19,11 +19,28 @@ namespace OOXMLValidatorCLI
             var collection = new ServiceCollection();
             collection.AddScoped<IValidate, Validate>();
             collection.AddScoped<IFunctionUtils, FunctionUtils>();
-            collection.AddScoped<IDocument, Document>();
+            collection.AddScoped<IDocumentUtils, DocumentUtils>();
             var serviceProvider = collection.BuildServiceProvider();
 
             var validate = serviceProvider.GetService<IValidate>();
-            string json = validate.OOXML(args[0], args[1]);
+            string xmlPath = string.Empty;
+            string version = null;
+
+            if (args != null && 0 < args.Length)
+            {
+                xmlPath = args[0];
+
+                if (1 < args.Length)
+                {
+                    version = args[1];
+                }
+            }
+            else
+            {
+                throw new ArgumentNullException();
+            }
+
+            string json = validate.OOXML(xmlPath, version);
 
             Console.Write(json);
         }

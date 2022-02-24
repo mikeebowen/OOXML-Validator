@@ -1,12 +1,14 @@
+using System;
+using System.Dynamic;
+using System.IO;
+using System.Linq;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using OOXMLValidatorCLI.Classes;
 using OOXMLValidatorCLI.Interfaces;
-using System;
-using System.Dynamic;
-using System.Linq;
 
 namespace OOXMLValidatorCLITests
 {
@@ -16,7 +18,7 @@ namespace OOXMLValidatorCLITests
         [TestMethod]
         public void ShouldSetOfficeVersion()
         {
-            var documentMock = Mock.Of<IDocument>();
+            var documentMock = Mock.Of<IDocumentUtils>();
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
             Assert.AreEqual(functionUtils.OfficeVersion, Enum.GetValues(typeof(FileFormatVersions)).Cast<FileFormatVersions>().Max());
@@ -26,33 +28,39 @@ namespace OOXMLValidatorCLITests
         public void GetDocument_ShouldCallCorrectOpenMethodWord()
         {
             string testPath = "foo/bar/baz.docx";
-            var documentMock = Mock.Of<IDocument>();
-            dynamic testDynamic = new ExpandoObject();
-            testDynamic.Foo = "Bar";
+            var documentUtilsMock = Mock.Of<IDocumentUtils>();
+            MemoryStream memoryStream = new MemoryStream();
 
-            Mock.Get(documentMock)
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            using WordprocessingDocument testDocument = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document);
+
+            Mock.Get(documentUtilsMock)
                 .Setup(d => d.OpenWordprocessingDocument(It.IsAny<string>()))
                 .Callback<string>(s =>
                 {
                     Assert.AreEqual(testPath, s);
                 })
-                .Returns(testDynamic);
-            FunctionUtils functionUtils = new FunctionUtils(documentMock);
+                .Returns(testDocument);
+            FunctionUtils functionUtils = new FunctionUtils(documentUtilsMock);
 
             var res = functionUtils.GetDocument(testPath);
 
-            Assert.AreEqual(res, testDynamic);
+            Assert.AreEqual(res, testDocument);
 
-            Mock.Get(documentMock).Verify(f => f.OpenWordprocessingDocument(testPath), Times.Once);
+            Mock.Get(documentUtilsMock).Verify(f => f.OpenWordprocessingDocument(testPath), Times.Once);
         }
 
         [TestMethod]
         public void GetDocument_ShouldCallCorrectOpenMethodPresentation()
         {
             string testPath = "foo/bar/baz.pptx";
-            var documentMock = Mock.Of<IDocument>();
-            dynamic testDynamic = new ExpandoObject();
-            testDynamic.Foo = "Bar";
+            var documentMock = Mock.Of<IDocumentUtils>();
+            MemoryStream memoryStream = new MemoryStream();
+
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            using PresentationDocument testDocument = PresentationDocument.Create(memoryStream, PresentationDocumentType.Presentation);
 
             Mock.Get(documentMock)
                 .Setup(d => d.OpenPresentationDocument(It.IsAny<string>()))
@@ -60,12 +68,12 @@ namespace OOXMLValidatorCLITests
                 {
                     Assert.AreEqual(testPath, s);
                 })
-                .Returns(testDynamic);
+                .Returns(testDocument);
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
             var res = functionUtils.GetDocument(testPath);
 
-            Assert.AreEqual(res, testDynamic);
+            Assert.AreEqual(res, testDocument);
 
             Mock.Get(documentMock).Verify(f => f.OpenPresentationDocument(testPath), Times.Once);
         }
@@ -74,9 +82,11 @@ namespace OOXMLValidatorCLITests
         public void GetDocument_ShouldCallCorrectOpenMethodSpreadsheet()
         {
             string testPath = "foo/bar/baz.xlsx";
-            var documentMock = Mock.Of<IDocument>();
-            dynamic testDynamic = new ExpandoObject();
-            testDynamic.Foo = "Bar";
+            var documentMock = Mock.Of<IDocumentUtils>();
+            MemoryStream memoryStream = new MemoryStream();
+            using SpreadsheetDocument testDynamic = SpreadsheetDocument.Create(memoryStream, SpreadsheetDocumentType.Workbook);
+
+            memoryStream.Seek(0, SeekOrigin.Begin);
 
             Mock.Get(documentMock)
                 .Setup(d => d.OpenSpreadsheetDocument(It.IsAny<string>()))
@@ -97,7 +107,7 @@ namespace OOXMLValidatorCLITests
         [TestMethod]
         public void SetOfficeVersion_ShouldSetValidVersion()
         {
-            var documentMock = Mock.Of<IDocument>();
+            var documentMock = Mock.Of<IDocumentUtils>();
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
             functionUtils.SetOfficeVersion("Office2016");
@@ -108,7 +118,7 @@ namespace OOXMLValidatorCLITests
         [TestMethod]
         public void SetOfficeVersion_ShouldSetDefaultVersion()
         {
-            var documentMock = Mock.Of<IDocument>();
+            var documentMock = Mock.Of<IDocumentUtils>();
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
             functionUtils.SetOfficeVersion(null);
@@ -120,7 +130,7 @@ namespace OOXMLValidatorCLITests
         public void GetValidationErrorsJson_ShouldReturnValidJson()
         {
             var validationErrorInfos = new ValidationErrorInfo[] { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
-            var documentMock = Mock.Of<IDocument>();
+            var documentMock = Mock.Of<IDocumentUtils>();
             string testJson = "[{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0},{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0},{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0}]";
 
 

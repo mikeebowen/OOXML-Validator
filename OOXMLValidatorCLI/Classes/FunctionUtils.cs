@@ -1,20 +1,21 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Validation;
-using Newtonsoft.Json;
-using OOXMLValidatorCLI.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Validation;
+using Newtonsoft.Json;
+using OOXMLValidatorCLI.Interfaces;
 
 namespace OOXMLValidatorCLI.Classes
 {
     public class FunctionUtils : IFunctionUtils
     {
-        private readonly IDocument _document;
+        private readonly IDocumentUtils _documentUtils;
         private Nullable<FileFormatVersions> _fileFormatVersions;
 
         public FileFormatVersions OfficeVersion
@@ -24,33 +25,46 @@ namespace OOXMLValidatorCLI.Classes
                 return _fileFormatVersions ?? Enum.GetValues(typeof(FileFormatVersions)).Cast<FileFormatVersions>().Max();
             }
         }
-        public FunctionUtils(IDocument document)
+        public FunctionUtils(IDocumentUtils documentUtils)
         {
-            _document = document;
+            _documentUtils = documentUtils;
             _fileFormatVersions = null;
         }
 
-        public dynamic GetDocument(string filePath)
+        public OpenXmlPackage GetDocument(string filePath)
         {
             string fileExtension = filePath.Substring(Math.Max(0, filePath.Length - 4)).ToLower();
 
-            if (!new string[] { "docx", "pptx", "xlsx" }.Contains(fileExtension))
+            if (!new string[] { "docx", "docm", "dotm", "dotx", "pptx", "pptm", "potm", "potx", "ppam", "ppsm", "ppsx", "xlsx", "xlsm", "xltm", "xltx", "xlam" }.Contains(fileExtension))
             {
-                throw new ArgumentException("file must be a .docx, .xlsx, or .pptx");
+                throw new ArgumentException("file must be a .docx, .docm, .dotm, .dotx, .pptx, .pptm, .potm, .potx, .ppam, .ppsm, .ppsx, .xlsx, .xlsm, .xltm, .xltx, or .xlam");
             }
 
-            dynamic doc = null;
+            OpenXmlPackage doc = null;
 
             switch (fileExtension)
             {
                 case "docx":
-                    doc = _document.OpenWordprocessingDocument(filePath);
+                case "docm":
+                case "dotm":
+                case "dotx":
+                    doc = _documentUtils.OpenWordprocessingDocument(filePath);
                     break;
                 case "pptx":
-                    doc = _document.OpenPresentationDocument(filePath);
+                case "pptm":
+                case "potm":
+                case "potx":
+                case "ppam":
+                case "ppsm":
+                case "ppsx":
+                    doc = _documentUtils.OpenPresentationDocument(filePath);
                     break;
                 case "xlsx":
-                    doc = _document.OpenSpreadsheetDocument(filePath);
+                case "xlsm":
+                case "xltm":
+                case "xltx":
+                case "xlam":
+                    doc = _documentUtils.OpenSpreadsheetDocument(filePath);
                     break;
                 default:
                     break;
@@ -72,9 +86,9 @@ namespace OOXMLValidatorCLI.Classes
             }
         }
 
-        public IEnumerable<ValidationErrorInfo> GetValidationErrors(dynamic doc)
+        public IEnumerable<ValidationErrorInfo> GetValidationErrors(OpenXmlPackage doc)
         {
-            return _document.Validate(doc, OfficeVersion);
+            return _documentUtils.Validate(doc, OfficeVersion);
         }
 
         public string GetValidationErrorsJson(IEnumerable<ValidationErrorInfo> validationErrors)
