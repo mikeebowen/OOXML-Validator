@@ -86,16 +86,16 @@ namespace OOXMLValidatorCLI.Classes
             }
         }
 
-        public IEnumerable<ValidationErrorInfo> GetValidationErrors(OpenXmlPackage doc)
+        public Tuple<bool, IEnumerable<ValidationErrorInfo>> GetValidationErrors(OpenXmlPackage doc)
         {
             return _documentUtils.Validate(doc, OfficeVersion);
         }
 
-        public string GetValidationErrorsJson(IEnumerable<ValidationErrorInfo> validationErrors)
+        public string GetValidationErrorsJson(Tuple<bool, IEnumerable<ValidationErrorInfo>> data)
         {
             List<dynamic> res = new List<dynamic>();
 
-            foreach (ValidationErrorInfo validationErrorInfo in validationErrors)
+            foreach (ValidationErrorInfo validationErrorInfo in data.Item2)
             {
                 dynamic dyno = new ExpandoObject();
                 dyno.Description = validationErrorInfo.Description;
@@ -104,7 +104,8 @@ namespace OOXMLValidatorCLI.Classes
                 dyno.ErrorType = validationErrorInfo.ErrorType;
                 res.Add(dyno);
             }
-            string json = JsonConvert.SerializeObject(res, Formatting.None,
+
+            string json = JsonConvert.SerializeObject(Tuple.Create(data.Item1, res), Formatting.None,
                         new JsonSerializerSettings()
                         {
                             ReferenceLoopHandling = ReferenceLoopHandling.Ignore

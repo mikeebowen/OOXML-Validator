@@ -1,9 +1,9 @@
-﻿using DocumentFormat.OpenXml.Validation;
-using OOXMLValidatorCLI.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Validation;
+using OOXMLValidatorCLI.Interfaces;
 
 namespace OOXMLValidatorCLI.Classes
 {
@@ -21,7 +21,7 @@ namespace OOXMLValidatorCLI.Classes
 
             dynamic doc = _functionUtils.GetDocument(filePath);
 
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = _functionUtils.GetValidationErrors(doc);
+            Tuple<bool, IEnumerable<ValidationErrorInfo>> validationErrorInfos = _functionUtils.GetValidationErrors(doc);
 
             return _functionUtils.GetValidationErrorsJson(validationErrorInfos);
         }

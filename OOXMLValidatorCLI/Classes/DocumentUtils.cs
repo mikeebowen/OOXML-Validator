@@ -24,10 +24,12 @@ namespace OOXMLValidatorCLI.Classes
         {
             return SpreadsheetDocument.Open(filePath, false);
         }
-        public IEnumerable<ValidationErrorInfo> Validate(OpenXmlPackage doc, FileFormatVersions version)
+        public Tuple<bool, IEnumerable<ValidationErrorInfo>> Validate(OpenXmlPackage doc, FileFormatVersions version)
         {
             OpenXmlValidator openXmlValidator = new OpenXmlValidator(version);
-            return openXmlValidator.Validate(doc);
+            bool isStrict = doc.StrictRelationshipFound;
+            IEnumerable<ValidationErrorInfo> errors = openXmlValidator.Validate(doc);
+            return new Tuple<bool, IEnumerable<ValidationErrorInfo>>(isStrict, errors);
         }
     }
 }

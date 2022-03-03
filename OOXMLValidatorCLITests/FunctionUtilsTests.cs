@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
@@ -129,14 +131,14 @@ namespace OOXMLValidatorCLITests
         [TestMethod]
         public void GetValidationErrorsJson_ShouldReturnValidJson()
         {
-            var validationErrorInfos = new ValidationErrorInfo[] { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
             var documentMock = Mock.Of<IDocumentUtils>();
-            string testJson = "[{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0},{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0},{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0}]";
+            string testJson = "{\"Item1\":true,\"Item2\":[{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0},{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0},{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0}]}";
 
 
             var functionUtils = new FunctionUtils(documentMock);
 
-            string res = functionUtils.GetValidationErrorsJson(validationErrorInfos);
+            string res = functionUtils.GetValidationErrorsJson(Tuple.Create(true, validationErrorInfos));
             Assert.AreEqual(res, testJson);
         }
     }

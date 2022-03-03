@@ -12,7 +12,7 @@ namespace OOXMLValidatorCLI.Interfaces
         FileFormatVersions OfficeVersion { get; }
         void SetOfficeVersion(string version);
         OpenXmlPackage GetDocument(string filePath);
-        IEnumerable<ValidationErrorInfo> GetValidationErrors(OpenXmlPackage doc);
-        string GetValidationErrorsJson(IEnumerable<ValidationErrorInfo> validationErrors);
+        Tuple<bool, IEnumerable<ValidationErrorInfo>> GetValidationErrors(OpenXmlPackage doc);
+        string GetValidationErrorsJson(Tuple<bool, IEnumerable<ValidationErrorInfo>> data);
     }
 }

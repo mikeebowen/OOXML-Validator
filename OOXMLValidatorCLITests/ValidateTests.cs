@@ -28,7 +28,7 @@ namespace OOXMLValidatorCLITests
 
             memoryStream.Seek(0, SeekOrigin.Begin);
 
-            var validationErrorInfos = new ValidationErrorInfo[] { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
 
             Mock.Get(functionUtilsMock).Setup(f => f.GetDocument(It.IsAny<string>())).Returns(testWordDoc);
             Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>()))
@@ -36,13 +36,13 @@ namespace OOXMLValidatorCLITests
                 {
                     Assert.AreEqual(testWordDoc, o);
                 })
-                .Returns(validationErrorInfos);
+                .Returns(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(true, validationErrorInfos));
 
             validate.OOXML(testPath, testFormat);
 
             Mock.Get(functionUtilsMock).Verify(f => f.SetOfficeVersion(testFormat), Times.Once());
             Mock.Get(functionUtilsMock).Verify(f => f.GetDocument(testPath), Times.Once());
-            Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrorsJson(validationErrorInfos), Times.Once());
+            Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrorsJson(Tuple.Create(true, validationErrorInfos)), Times.Once());
         }
     }
 }

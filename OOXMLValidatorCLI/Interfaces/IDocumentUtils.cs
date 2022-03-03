@@ -12,6 +12,6 @@ namespace OOXMLValidatorCLI.Interfaces
         WordprocessingDocument OpenWordprocessingDocument(string tempFilePath);
         SpreadsheetDocument OpenSpreadsheetDocument(string tempFilePath);
         PresentationDocument OpenPresentationDocument(string tempFilePath);
-        IEnumerable<ValidationErrorInfo> Validate(OpenXmlPackage doc, FileFormatVersions version);
+        Tuple<bool, IEnumerable<ValidationErrorInfo>> Validate(OpenXmlPackage doc, FileFormatVersions version);
     }
 }
