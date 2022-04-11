@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using DocumentFormat.OpenXml.Validation;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using OOXMLValidatorCLI;
 using OOXMLValidatorCLI.Classes;
 using OOXMLValidatorCLI.Interfaces;
+using System;
 
 namespace OOXMLValidatorCLI
 {
@@ -19,20 +13,41 @@ namespace OOXMLValidatorCLI
             var collection = new ServiceCollection();
             collection.AddScoped<IValidate, Validate>();
             collection.AddScoped<IFunctionUtils, FunctionUtils>();
-            collection.AddScoped<IDocument, Document>();
+            collection.AddScoped<IDocumentUtils, DocumentUtils>();
             var serviceProvider = collection.BuildServiceProvider();
 
             var validate = serviceProvider.GetService<IValidate>();
-            string xmlPath = string.Empty;
+            string xmlPath;
+            bool? returnXml = null;
             string version = null;
 
             if (args != null && 0 < args.Length)
             {
                 xmlPath = args[0];
 
-                if (1 < args.Length)
+                if (args.Length == 2)
                 {
                     version = args[1];
+                    returnXml = args[1] == "--xml" ? true : false;
+                }
+
+                if (args.Length == 3)
+                {
+                    if (!args[1].StartsWith("--"))
+                    {
+                        version = args[1];
+                    }
+                    else
+                    {
+                        version = args[2];
+                    }
+
+                    returnXml = args[1] == "--xml" || args[2] == "--xml" ? true : false;
+                }
+
+                if (args.Length > 3)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(args));
                 }
             }
             else
@@ -40,9 +55,15 @@ namespace OOXMLValidatorCLI
                 throw new ArgumentNullException();
             }
 
-            string json = validate.OOXML(xmlPath, version);
 
-            Console.Write(json);
+            if (args.Length > 2)
+            {
+                returnXml = args[1] == "--xml" || args[2] == "--xml" ? true : false;
+            }
+
+            object validationErrors = validate.OOXML(xmlPath, version, returnXml);
+
+            Console.Write(validationErrors);
         }
     }
 }

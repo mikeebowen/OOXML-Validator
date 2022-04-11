@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Newtonsoft.Json;
 using OOXMLValidatorCLI.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace OOXMLValidatorCLI.Classes
 {
     public class FunctionUtils : IFunctionUtils
     {
-        private readonly IDocument _document;
-        private Nullable<FileFormatVersions> _fileFormatVersions;
+        private readonly IDocumentUtils _documentUtils;
+        private FileFormatVersions? _fileFormatVersions;
 
         public FileFormatVersions OfficeVersion
         {
@@ -24,13 +23,13 @@ namespace OOXMLValidatorCLI.Classes
                 return _fileFormatVersions ?? Enum.GetValues(typeof(FileFormatVersions)).Cast<FileFormatVersions>().Max();
             }
         }
-        public FunctionUtils(IDocument document)
+        public FunctionUtils(IDocumentUtils documentUtils)
         {
-            _document = document;
+            _documentUtils = documentUtils;
             _fileFormatVersions = null;
         }
 
-        public dynamic GetDocument(string filePath)
+        public OpenXmlPackage GetDocument(string filePath)
         {
             string fileExtension = filePath.Substring(Math.Max(0, filePath.Length - 4)).ToLower();
 
@@ -39,7 +38,7 @@ namespace OOXMLValidatorCLI.Classes
                 throw new ArgumentException("file must be a .docx, .docm, .dotm, .dotx, .pptx, .pptm, .potm, .potx, .ppam, .ppsm, .ppsx, .xlsx, .xlsm, .xltm, .xltx, or .xlam");
             }
 
-            dynamic doc = null;
+            OpenXmlPackage doc = null;
 
             switch (fileExtension)
             {
@@ -47,7 +46,7 @@ namespace OOXMLValidatorCLI.Classes
                 case "docm":
                 case "dotm":
                 case "dotx":
-                    doc = _document.OpenWordprocessingDocument(filePath);
+                    doc = _documentUtils.OpenWordprocessingDocument(filePath);
                     break;
                 case "pptx":
                 case "pptm":
@@ -56,14 +55,14 @@ namespace OOXMLValidatorCLI.Classes
                 case "ppam":
                 case "ppsm":
                 case "ppsx":
-                    doc = _document.OpenPresentationDocument(filePath);
+                    doc = _documentUtils.OpenPresentationDocument(filePath);
                     break;
                 case "xlsx":
                 case "xlsm":
                 case "xltm":
                 case "xltx":
                 case "xlam":
-                    doc = _document.OpenSpreadsheetDocument(filePath);
+                    doc = _documentUtils.OpenSpreadsheetDocument(filePath);
                     break;
                 default:
                     break;
@@ -85,31 +84,55 @@ namespace OOXMLValidatorCLI.Classes
             }
         }
 
-        public IEnumerable<ValidationErrorInfo> GetValidationErrors(dynamic doc)
+        public Tuple<bool, IEnumerable<ValidationErrorInfo>> GetValidationErrors(OpenXmlPackage doc)
         {
-            return _document.Validate(doc, OfficeVersion);
+            return _documentUtils.Validate(doc, OfficeVersion);
         }
 
-        public string GetValidationErrorsJson(IEnumerable<ValidationErrorInfo> validationErrors)
+        public object GetValidationErrors(Tuple<bool, IEnumerable<ValidationErrorInfo>> validationInfo, string filePath, bool returnXml)
         {
-            List<dynamic> res = new List<dynamic>();
-
-            foreach (ValidationErrorInfo validationErrorInfo in validationErrors)
+            if (!returnXml)
             {
-                dynamic dyno = new ExpandoObject();
-                dyno.Description = validationErrorInfo.Description;
-                dyno.Path = validationErrorInfo.Path;
-                dyno.Id = validationErrorInfo.Id;
-                dyno.ErrorType = validationErrorInfo.ErrorType;
-                res.Add(dyno);
-            }
-            string json = JsonConvert.SerializeObject(res, Formatting.None,
-                        new JsonSerializerSettings()
-                        {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        });
+                List<dynamic> res = new List<dynamic>();
 
-            return json;
+                foreach (ValidationErrorInfo validationErrorInfo in validationInfo.Item2)
+                {
+                    dynamic dyno = new ExpandoObject();
+                    dyno.Description = validationErrorInfo.Description;
+                    dyno.Path = validationErrorInfo.Path;
+                    dyno.Id = validationErrorInfo.Id;
+                    dyno.ErrorType = validationErrorInfo.ErrorType;
+                    res.Add(dyno);
+                }
+
+                string json = JsonConvert.SerializeObject(res, Formatting.None,
+                            new JsonSerializerSettings()
+                            {
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
+
+                return json;
+            }
+            else
+            {
+                XElement xml = new XElement("ValidationErrorInfoList");
+                xml.SetAttributeValue("FilePath", filePath);
+                xml.SetAttributeValue("IsStrict", validationInfo.Item1);
+
+                foreach (ValidationErrorInfo validationErrorInfo in validationInfo.Item2)
+                {
+                    xml.Add(
+                        new XElement("ValidationErrorInfo",
+                            new XElement("Description", validationErrorInfo.Description),
+                            new XElement("Path", validationErrorInfo.Path),
+                            new XElement("Id", validationErrorInfo.Id),
+                            new XElement("ErrorType", validationErrorInfo.ErrorType)
+                        )
+                    );
+                }
+
+                return new XDocument(xml);
+            }
         }
     }
 }
