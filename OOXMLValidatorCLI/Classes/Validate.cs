@@ -14,7 +14,7 @@ namespace OOXMLValidatorCLI.Classes
         {
             _functionUtils = functionUtils;
         }
-        public object OOXML(string filePath, string format, bool returnXml)
+        public object OOXML(string filePath, string format, bool? returnXml)
         {
             _functionUtils.SetOfficeVersion(format);
 
@@ -22,7 +22,7 @@ namespace OOXMLValidatorCLI.Classes
 
             Tuple<bool, IEnumerable<ValidationErrorInfo>> validationErrorInfos = _functionUtils.GetValidationErrors(doc);
 
-            return _functionUtils.GetValidationErrors(validationErrorInfos, filePath, returnXml);
+            return _functionUtils.GetValidationErrors(validationErrorInfos, filePath, returnXml ?? false);
         }
     }
 }

@@ -3,12 +3,14 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json;
 using OOXMLValidatorCLI.Classes;
 using OOXMLValidatorCLI.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace OOXMLValidatorCLITests
 {
@@ -127,17 +129,32 @@ namespace OOXMLValidatorCLITests
         }
 
         [TestMethod]
-        public void GetValidationErrorsJson_ShouldReturnValidJson()
+        public void GetValidationErrors_ShouldReturnValidJson()
         {
             IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
             var documentMock = Mock.Of<IDocumentUtils>();
-            string testJson = "{\"Item1\":true,\"Item2\":[{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0},{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0},{\"Description\":\"\",\"Path\":null,\"Id\":null,\"ErrorType\":0}]}";
+            string testJson = "\"[{\\\"Description\\\":\\\"\\\",\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":0},{\\\"Description\\\":\\\"\\\",\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":0},{\\\"Description\\\":\\\"\\\",\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":0}]\"";
 
 
             var functionUtils = new FunctionUtils(documentMock);
 
-            object res = functionUtils.GetValidationErrorsJson(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", false);
-            Assert.AreEqual(res, testJson);
+            object res = functionUtils.GetValidationErrors(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", false);
+            string jsonData = JsonConvert.SerializeObject(res);
+            Assert.AreEqual(jsonData, testJson);
+        }
+
+        [TestMethod]
+        public void GetValidationErrors_ShouldReturnValidXml()
+        {
+            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            var documentMock = Mock.Of<IDocumentUtils>();
+            string xmlString = "<ValidationErrorInfoList FilePath='C:\\test\\file\\path.xlsx' IsStrict='true'><ValidationErrorInfo><Description></Description><Path/><Id/><ErrorType>Schema</ErrorType></ValidationErrorInfo><ValidationErrorInfo><Description></Description><Path/><Id/><ErrorType>Schema</ErrorType></ValidationErrorInfo><ValidationErrorInfo><Description></Description><Path/><Id/><ErrorType>Schema</ErrorType></ValidationErrorInfo></ValidationErrorInfoList>";
+            XDocument xDoc = XDocument.Parse(xmlString);
+
+            var functionUtils = new FunctionUtils(documentMock);
+            object res = functionUtils.GetValidationErrors(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", true);
+
+            Assert.IsTrue(XNode.DeepEquals((res as XDocument), xDoc));
         }
     }
 }

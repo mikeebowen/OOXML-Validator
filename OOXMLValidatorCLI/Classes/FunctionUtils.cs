@@ -131,7 +131,7 @@ namespace OOXMLValidatorCLI.Classes
                     );
                 }
 
-                return xml;
+                return new XDocument(xml);
             }
         }
     }

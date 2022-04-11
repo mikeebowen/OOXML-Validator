@@ -40,7 +40,7 @@ namespace OOXMLValidatorCLITests
 
             Mock.Get(functionUtilsMock).Verify(f => f.SetOfficeVersion(testFormat), Times.Once());
             Mock.Get(functionUtilsMock).Verify(f => f.GetDocument(testPath), Times.Once());
-            Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrorsJson(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", false), Times.Once());
+            Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrors(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(true, validationErrorInfos), testPath, false), Times.Once());
         }
     }
 }

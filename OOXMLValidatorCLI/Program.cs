@@ -17,16 +17,37 @@ namespace OOXMLValidatorCLI
             var serviceProvider = collection.BuildServiceProvider();
 
             var validate = serviceProvider.GetService<IValidate>();
-            string xmlPath = string.Empty;
+            string xmlPath;
+            bool? returnXml = null;
             string version = null;
 
             if (args != null && 0 < args.Length)
             {
                 xmlPath = args[0];
 
-                if (1 < args.Length)
+                if (args.Length == 2)
                 {
                     version = args[1];
+                    returnXml = args[1] == "--xml" ? true : false;
+                }
+
+                if (args.Length == 3)
+                {
+                    if (!args[1].StartsWith("--"))
+                    {
+                        version = args[1];
+                    }
+                    else
+                    {
+                        version = args[2];
+                    }
+
+                    returnXml = args[1] == "--xml" || args[2] == "--xml" ? true : false;
+                }
+
+                if (args.Length > 3)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(args));
                 }
             }
             else
@@ -34,7 +55,11 @@ namespace OOXMLValidatorCLI
                 throw new ArgumentNullException();
             }
 
-            bool returnXml = args[2] == "--xml" ? true : false;
+
+            if (args.Length > 2)
+            {
+                returnXml = args[1] == "--xml" || args[2] == "--xml" ? true : false;
+            }
 
             object validationErrors = validate.OOXML(xmlPath, version, returnXml);
 
