@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using OOXMLValidatorCLI.Interfaces;
+using System;
+using System.Collections.Generic;
 
 namespace OOXMLValidatorCLI.Classes
 {
@@ -15,15 +14,15 @@ namespace OOXMLValidatorCLI.Classes
         {
             _functionUtils = functionUtils;
         }
-        public string OOXML(string filePath, string format)
+        public object OOXML(string filePath, string format, bool returnXml)
         {
             _functionUtils.SetOfficeVersion(format);
 
-            dynamic doc = _functionUtils.GetDocument(filePath);
+            OpenXmlPackage doc = _functionUtils.GetDocument(filePath);
 
             Tuple<bool, IEnumerable<ValidationErrorInfo>> validationErrorInfos = _functionUtils.GetValidationErrors(doc);
 
-            return _functionUtils.GetValidationErrorsJson(validationErrorInfos);
+            return _functionUtils.GetValidationErrors(validationErrorInfos, filePath, returnXml);
         }
     }
 }

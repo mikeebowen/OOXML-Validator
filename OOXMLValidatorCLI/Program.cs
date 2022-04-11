@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using DocumentFormat.OpenXml.Validation;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using OOXMLValidatorCLI;
+﻿using Microsoft.Extensions.DependencyInjection;
 using OOXMLValidatorCLI.Classes;
 using OOXMLValidatorCLI.Interfaces;
+using System;
 
 namespace OOXMLValidatorCLI
 {
@@ -40,9 +34,11 @@ namespace OOXMLValidatorCLI
                 throw new ArgumentNullException();
             }
 
-            string json = validate.OOXML(xmlPath, version);
+            bool returnXml = args[2] == "--xml" ? true : false;
 
-            Console.Write(json);
+            object validationErrors = validate.OOXML(xmlPath, version, returnXml);
+
+            Console.Write(validationErrors);
         }
     }
 }

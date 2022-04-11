@@ -1,9 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
@@ -11,6 +5,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using OOXMLValidatorCLI.Classes;
 using OOXMLValidatorCLI.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace OOXMLValidatorCLITests
 {
@@ -138,7 +136,7 @@ namespace OOXMLValidatorCLITests
 
             var functionUtils = new FunctionUtils(documentMock);
 
-            string res = functionUtils.GetValidationErrorsJson(Tuple.Create(true, validationErrorInfos));
+            object res = functionUtils.GetValidationErrorsJson(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", false);
             Assert.AreEqual(res, testJson);
         }
     }

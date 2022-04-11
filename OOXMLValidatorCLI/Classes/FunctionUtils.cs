@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml;
+﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Newtonsoft.Json;
 using OOXMLValidatorCLI.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace OOXMLValidatorCLI.Classes
 {
     public class FunctionUtils : IFunctionUtils
     {
         private readonly IDocumentUtils _documentUtils;
-        private Nullable<FileFormatVersions> _fileFormatVersions;
+        private FileFormatVersions? _fileFormatVersions;
 
         public FileFormatVersions OfficeVersion
         {
@@ -91,27 +89,50 @@ namespace OOXMLValidatorCLI.Classes
             return _documentUtils.Validate(doc, OfficeVersion);
         }
 
-        public string GetValidationErrorsJson(Tuple<bool, IEnumerable<ValidationErrorInfo>> data)
+        public object GetValidationErrors(Tuple<bool, IEnumerable<ValidationErrorInfo>> validationInfo, string filePath, bool returnXml)
         {
-            List<dynamic> res = new List<dynamic>();
-
-            foreach (ValidationErrorInfo validationErrorInfo in data.Item2)
+            if (!returnXml)
             {
-                dynamic dyno = new ExpandoObject();
-                dyno.Description = validationErrorInfo.Description;
-                dyno.Path = validationErrorInfo.Path;
-                dyno.Id = validationErrorInfo.Id;
-                dyno.ErrorType = validationErrorInfo.ErrorType;
-                res.Add(dyno);
+                List<dynamic> res = new List<dynamic>();
+
+                foreach (ValidationErrorInfo validationErrorInfo in validationInfo.Item2)
+                {
+                    dynamic dyno = new ExpandoObject();
+                    dyno.Description = validationErrorInfo.Description;
+                    dyno.Path = validationErrorInfo.Path;
+                    dyno.Id = validationErrorInfo.Id;
+                    dyno.ErrorType = validationErrorInfo.ErrorType;
+                    res.Add(dyno);
+                }
+
+                string json = JsonConvert.SerializeObject(res, Formatting.None,
+                            new JsonSerializerSettings()
+                            {
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
+
+                return json;
             }
+            else
+            {
+                XElement xml = new XElement("ValidationErrorInfoList");
+                xml.SetAttributeValue("FilePath", filePath);
+                xml.SetAttributeValue("IsStrict", validationInfo.Item1);
 
-            string json = JsonConvert.SerializeObject(Tuple.Create(data.Item1, res), Formatting.None,
-                        new JsonSerializerSettings()
-                        {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        });
+                foreach (ValidationErrorInfo validationErrorInfo in validationInfo.Item2)
+                {
+                    xml.Add(
+                        new XElement("ValidationErrorInfo",
+                            new XElement("Description", validationErrorInfo.Description),
+                            new XElement("Path", validationErrorInfo.Path),
+                            new XElement("Id", validationErrorInfo.Id),
+                            new XElement("ErrorType", validationErrorInfo.ErrorType)
+                        )
+                    );
+                }
 
-            return json;
+                return xml;
+            }
         }
     }
 }

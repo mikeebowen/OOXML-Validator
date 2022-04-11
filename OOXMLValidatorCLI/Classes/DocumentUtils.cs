@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DocumentFormat.OpenXml;
+﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using OOXMLValidatorCLI.Interfaces;
+using System;
+using System.Collections.Generic;
 
 namespace OOXMLValidatorCLI.Classes
 {
@@ -16,9 +15,7 @@ namespace OOXMLValidatorCLI.Classes
         }
         public PresentationDocument OpenPresentationDocument(string filePath)
         {
-            var foo = PresentationDocument.Open(filePath, false);
-            var bar = foo.StrictRelationshipFound;
-            return foo;
+            return PresentationDocument.Open(filePath, false);
         }
         public SpreadsheetDocument OpenSpreadsheetDocument(string filePath)
         {

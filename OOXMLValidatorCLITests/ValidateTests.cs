@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
-using System.Text;
-using DocumentFormat.OpenXml;
+﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using OOXMLValidatorCLI.Classes;
 using OOXMLValidatorCLI.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace OOXMLValidatorCLITests
 {
@@ -38,11 +36,11 @@ namespace OOXMLValidatorCLITests
                 })
                 .Returns(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(true, validationErrorInfos));
 
-            validate.OOXML(testPath, testFormat);
+            validate.OOXML(testPath, testFormat, false);
 
             Mock.Get(functionUtilsMock).Verify(f => f.SetOfficeVersion(testFormat), Times.Once());
             Mock.Get(functionUtilsMock).Verify(f => f.GetDocument(testPath), Times.Once());
-            Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrorsJson(Tuple.Create(true, validationErrorInfos)), Times.Once());
+            Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrorsJson(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", false), Times.Once());
         }
     }
 }
