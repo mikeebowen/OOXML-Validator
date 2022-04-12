@@ -16,7 +16,7 @@ First | string | The absolute path to the file to validate | Required
 Second | string | The version of Office to validate against* | Optional
 Third | string | If the value is `--xml`, cli will return xml | Optional
 
-\* Must be on of these: `Office2007`, `Office2010`, `Office2013`, `Office2016`, `Office2019`, `Office2021`, `Microsoft365`. Defaults to `Microsoft365`
+\* Must be one of these: `Office2007`, `Office2010`, `Office2013`, `Office2016`, `Office2019`, `Office2021`, `Microsoft365`. Defaults to `Microsoft365`
 
 ## XML vs JSON
 
