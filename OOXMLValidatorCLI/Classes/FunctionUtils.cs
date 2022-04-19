@@ -29,15 +29,8 @@ namespace OOXMLValidatorCLI.Classes
             _fileFormatVersions = null;
         }
 
-        public OpenXmlPackage GetDocument(string filePath)
+        public OpenXmlPackage GetDocument(string filePath, string fileExtension)
         {
-            string fileExtension = filePath.Substring(Math.Max(0, filePath.Length - 4)).ToLower();
-
-            if (!new string[] { "docx", "docm", "dotm", "dotx", "pptx", "pptm", "potm", "potx", "ppam", "ppsm", "ppsx", "xlsx", "xlsm", "xltm", "xltx", "xlam" }.Contains(fileExtension))
-            {
-                throw new ArgumentException("file must be a .docx, .docm, .dotm, .dotx, .pptx, .pptm, .potm, .potx, .ppam, .ppsm, .ppsx, .xlsx, .xlsm, .xltm, .xltx, or .xlam");
-            }
-
             OpenXmlPackage doc = null;
 
             switch (fileExtension)

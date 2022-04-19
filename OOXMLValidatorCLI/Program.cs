@@ -61,7 +61,7 @@ namespace OOXMLValidatorCLI
                 returnXml = args[1] == "--xml" || args[2] == "--xml" ? true : false;
             }
 
-            object validationErrors = validate.OOXML(xmlPath, version, returnXml);
+            object validationErrors = validate.OOXML(xmlPath, version, returnXml ?? false);
 
             Console.Write(validationErrors);
         }
