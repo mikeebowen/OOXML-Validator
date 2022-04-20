@@ -13,6 +13,8 @@ namespace OOXMLValidatorCLI.Classes
     public class Validate : IValidate
     {
         private readonly IFunctionUtils _functionUtils;
+        private readonly string[] validFileExtensions = new string[] { ".docx", ".docm", ".dotm", ".dotx", ".pptx", ".pptm", ".potm", ".potx", ".ppam", ".ppsm", ".ppsx", ".xlsx", ".xlsm", ".xltm", ".xltx", ".xlam" };
+
 
         public Validate(IFunctionUtils functionUtils)
         {
@@ -27,14 +29,16 @@ namespace OOXMLValidatorCLI.Classes
 
             if (fileAttributes.HasFlag(FileAttributes.Directory))
             {
-                IEnumerable<string> files = Directory.GetFiles(filePath);
+                IEnumerable<string> files = Directory.EnumerateFiles(filePath, "*.*", SearchOption.AllDirectories).Where(f =>
+                {
+                    return validFileExtensions.Contains(Path.GetExtension(f));
+                });
                 XDocument xDocument = new XDocument(new XElement("Document"));
                 List<object> validationErrorList = new List<object>();
 
-
                 foreach (string file in files)
                 {
-                    string fileExtension = file.Substring(Math.Max(0, file.Length - 4)).ToLower();
+                    string fileExtension = Path.GetExtension(file);
 
                     Tuple<bool, IEnumerable<ValidationErrorInfo>> validationErrorInfos = _getValidationErrors(file, fileExtension, true);
 
@@ -66,7 +70,7 @@ namespace OOXMLValidatorCLI.Classes
             }
             else
             {
-                string fileExtension = filePath.Substring(Math.Max(0, filePath.Length - 4)).ToLower();
+                string fileExtension = Path.GetExtension(filePath);
                 Tuple<bool, IEnumerable<ValidationErrorInfo>> validationErrorInfos = _getValidationErrors(filePath, fileExtension, false);
 
                 return _functionUtils.GetValidationErrors(validationErrorInfos, filePath, returnXml);
@@ -80,12 +84,12 @@ namespace OOXMLValidatorCLI.Classes
 
             if (
                 fileAttributes.HasFlag(FileAttributes.Directory) ||
-                !new string[] { "docx", "docm", "dotm", "dotx", "pptx", "pptm", "potm", "potx", "ppam", "ppsm", "ppsx", "xlsx", "xlsm", "xltm", "xltx", "xlam" }.Contains(fileExtension)
+                !validFileExtensions.Contains(fileExtension)
             )
             {
                 if (!ignoreInvalidFiles)
                 {
-                    throw new ArgumentException("file must be a .docx, .docm, .dotm, .dotx, .pptx, .pptm, .potm, .potx, .ppam, .ppsm, .ppsx, .xlsx, .xlsm, .xltm, .xltx, or .xlam");
+                    throw new ArgumentException(string.Concat("file must be have one of these extensions: ", string.Join(", ", validFileExtensions)));
                 }
                 else
                 {
