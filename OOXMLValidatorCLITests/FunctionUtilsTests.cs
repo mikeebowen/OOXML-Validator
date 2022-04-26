@@ -46,7 +46,7 @@ namespace OOXMLValidatorCLITests
                 .Returns(testDocument);
             FunctionUtils functionUtils = new FunctionUtils(documentUtilsMock);
 
-            var res = functionUtils.GetDocument(testPath);
+            var res = functionUtils.GetDocument(testPath, ".docx");
 
             Assert.AreEqual(res, testDocument);
 
@@ -73,7 +73,7 @@ namespace OOXMLValidatorCLITests
                 .Returns(testDocument);
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
-            var res = functionUtils.GetDocument(testPath);
+            var res = functionUtils.GetDocument(testPath, ".pptx");
 
             Assert.AreEqual(res, testDocument);
 
@@ -99,7 +99,7 @@ namespace OOXMLValidatorCLITests
                 .Returns(testDynamic);
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
-            var res = functionUtils.GetDocument(testPath);
+            var res = functionUtils.GetDocument(testPath, ".xlsx");
 
             Assert.AreEqual(res, testDynamic);
 

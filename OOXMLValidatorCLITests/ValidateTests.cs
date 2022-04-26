@@ -18,7 +18,8 @@ namespace OOXMLValidatorCLITests
         public void Validate_ShouldCallTheRightMethods()
         {
             var functionUtilsMock = Mock.Of<IFunctionUtils>();
-            var validate = new Validate(functionUtilsMock);
+            var fileServiceMock = Mock.Of<IFileService>();
+            var validate = new Validate(functionUtilsMock, fileServiceMock);
             string testPath = "path/to/a/file.docx";
             string testFormat = "Office2016";
             MemoryStream memoryStream = new MemoryStream();
@@ -28,7 +29,7 @@ namespace OOXMLValidatorCLITests
 
             IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
 
-            Mock.Get(functionUtilsMock).Setup(f => f.GetDocument(It.IsAny<string>())).Returns(testWordDoc);
+            Mock.Get(functionUtilsMock).Setup(f => f.GetDocument(It.IsAny<string>(), ".docx")).Returns(testWordDoc);
             Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>()))
                 .Callback<dynamic>(o =>
                 {
@@ -39,7 +40,7 @@ namespace OOXMLValidatorCLITests
             validate.OOXML(testPath, testFormat, false);
 
             Mock.Get(functionUtilsMock).Verify(f => f.SetOfficeVersion(testFormat), Times.Once());
-            Mock.Get(functionUtilsMock).Verify(f => f.GetDocument(testPath), Times.Once());
+            Mock.Get(functionUtilsMock).Verify(f => f.GetDocument(testPath, ".docx"), Times.Once());
             Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrors(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(true, validationErrorInfos), testPath, false), Times.Once());
         }
     }
