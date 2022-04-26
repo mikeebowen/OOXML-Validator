@@ -35,26 +35,26 @@ namespace OOXMLValidatorCLI.Classes
 
             switch (fileExtension)
             {
-               case ".docx":
-               case ".docm":
-               case ".dotm":
-               case ".dotx":
+                case ".docx":
+                case ".docm":
+                case ".dotm":
+                case ".dotx":
                     doc = _documentUtils.OpenWordprocessingDocument(filePath);
                     break;
-               case ".pptx":
-               case ".pptm":
-               case ".potm":
-               case ".potx":
-               case ".ppam":
-               case ".ppsm":
-               case ".ppsx":
+                case ".pptx":
+                case ".pptm":
+                case ".potm":
+                case ".potx":
+                case ".ppam":
+                case ".ppsm":
+                case ".ppsx":
                     doc = _documentUtils.OpenPresentationDocument(filePath);
                     break;
-               case ".xlsx":
-               case ".xlsm":
-               case ".xltm":
-               case ".xltx":
-               case ".xlam":
+                case ".xlsx":
+                case ".xlsm":
+                case ".xltm":
+                case ".xltx":
+                case ".xlam":
                     doc = _documentUtils.OpenSpreadsheetDocument(filePath);
                     break;
                 default:
