@@ -2,6 +2,6 @@
 {
     public interface IValidate
     {
-        object OOXML(string filePath, string format, bool? returnXml);
+        object OOXML(string filePath, string format, bool returnXml, bool recursive);
     }
 }

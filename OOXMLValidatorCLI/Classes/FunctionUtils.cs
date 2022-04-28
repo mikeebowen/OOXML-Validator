@@ -29,39 +29,32 @@ namespace OOXMLValidatorCLI.Classes
             _fileFormatVersions = null;
         }
 
-        public OpenXmlPackage GetDocument(string filePath)
+        public OpenXmlPackage GetDocument(string filePath, string fileExtension)
         {
-            string fileExtension = filePath.Substring(Math.Max(0, filePath.Length - 4)).ToLower();
-
-            if (!new string[] { "docx", "docm", "dotm", "dotx", "pptx", "pptm", "potm", "potx", "ppam", "ppsm", "ppsx", "xlsx", "xlsm", "xltm", "xltx", "xlam" }.Contains(fileExtension))
-            {
-                throw new ArgumentException("file must be a .docx, .docm, .dotm, .dotx, .pptx, .pptm, .potm, .potx, .ppam, .ppsm, .ppsx, .xlsx, .xlsm, .xltm, .xltx, or .xlam");
-            }
-
             OpenXmlPackage doc = null;
 
             switch (fileExtension)
             {
-                case "docx":
-                case "docm":
-                case "dotm":
-                case "dotx":
+                case ".docx":
+                case ".docm":
+                case ".dotm":
+                case ".dotx":
                     doc = _documentUtils.OpenWordprocessingDocument(filePath);
                     break;
-                case "pptx":
-                case "pptm":
-                case "potm":
-                case "potx":
-                case "ppam":
-                case "ppsm":
-                case "ppsx":
+                case ".pptx":
+                case ".pptm":
+                case ".potm":
+                case ".potx":
+                case ".ppam":
+                case ".ppsm":
+                case ".ppsx":
                     doc = _documentUtils.OpenPresentationDocument(filePath);
                     break;
-                case "xlsx":
-                case "xlsm":
-                case "xltm":
-                case "xltx":
-                case "xlam":
+                case ".xlsx":
+                case ".xlsm":
+                case ".xltm":
+                case ".xltx":
+                case ".xlam":
                     doc = _documentUtils.OpenSpreadsheetDocument(filePath);
                     break;
                 default:
@@ -89,7 +82,7 @@ namespace OOXMLValidatorCLI.Classes
             return _documentUtils.Validate(doc, OfficeVersion);
         }
 
-        public object GetValidationErrors(Tuple<bool, IEnumerable<ValidationErrorInfo>> validationInfo, string filePath, bool returnXml)
+        public object GetValidationErrorsData(Tuple<bool, IEnumerable<ValidationErrorInfo>> validationInfo, string filePath, bool returnXml)
         {
             if (!returnXml)
             {

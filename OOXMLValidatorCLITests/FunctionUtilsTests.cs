@@ -46,7 +46,7 @@ namespace OOXMLValidatorCLITests
                 .Returns(testDocument);
             FunctionUtils functionUtils = new FunctionUtils(documentUtilsMock);
 
-            var res = functionUtils.GetDocument(testPath);
+            var res = functionUtils.GetDocument(testPath, ".docx");
 
             Assert.AreEqual(res, testDocument);
 
@@ -73,7 +73,7 @@ namespace OOXMLValidatorCLITests
                 .Returns(testDocument);
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
-            var res = functionUtils.GetDocument(testPath);
+            var res = functionUtils.GetDocument(testPath, ".pptx");
 
             Assert.AreEqual(res, testDocument);
 
@@ -99,7 +99,7 @@ namespace OOXMLValidatorCLITests
                 .Returns(testDynamic);
             FunctionUtils functionUtils = new FunctionUtils(documentMock);
 
-            var res = functionUtils.GetDocument(testPath);
+            var res = functionUtils.GetDocument(testPath, ".xlsx");
 
             Assert.AreEqual(res, testDynamic);
 
@@ -129,7 +129,7 @@ namespace OOXMLValidatorCLITests
         }
 
         [TestMethod]
-        public void GetValidationErrors_ShouldReturnValidJson()
+        public void GetValidationErrorsData_ShouldReturnValidJson()
         {
             IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
             var documentMock = Mock.Of<IDocumentUtils>();
@@ -138,13 +138,13 @@ namespace OOXMLValidatorCLITests
 
             var functionUtils = new FunctionUtils(documentMock);
 
-            object res = functionUtils.GetValidationErrors(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", false);
+            object res = functionUtils.GetValidationErrorsData(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", false);
             string jsonData = JsonConvert.SerializeObject(res);
             Assert.AreEqual(jsonData, testJson);
         }
 
         [TestMethod]
-        public void GetValidationErrors_ShouldReturnValidXml()
+        public void GetValidationErrorsData_ShouldReturnValidXml()
         {
             IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
             var documentMock = Mock.Of<IDocumentUtils>();
@@ -152,9 +152,29 @@ namespace OOXMLValidatorCLITests
             XDocument xDoc = XDocument.Parse(xmlString);
 
             var functionUtils = new FunctionUtils(documentMock);
-            object res = functionUtils.GetValidationErrors(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", true);
+            object res = functionUtils.GetValidationErrorsData(Tuple.Create(true, validationErrorInfos), @"C:\test\file\path.xlsx", true);
 
             Assert.IsTrue(XNode.DeepEquals((res as XDocument), xDoc));
+        }
+
+        [TestMethod]
+        public void GetValidationErrors_ShouldCallValidate()
+        {
+            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            var testTup = Tuple.Create(true, validationErrorInfos);
+            var documentMock = Mock.Of<IDocumentUtils>();
+
+            MemoryStream memoryStream = new MemoryStream();
+            using WordprocessingDocument testWordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document);
+
+            Mock.Get(documentMock).Setup(d => d.Validate(It.IsAny<OpenXmlPackage>(), It.IsAny<FileFormatVersions>())).Returns(testTup);
+            
+            var functionUtils = new FunctionUtils(documentMock);
+
+            var resTup = functionUtils.GetValidationErrors(testWordDoc);
+
+            Assert.AreEqual(testTup, resTup);
+            Mock.Get(documentMock).Verify(d => d.Validate(It.IsAny<OpenXmlPackage>(), It.IsAny<FileFormatVersions>()), Times.Once());
         }
     }
 }

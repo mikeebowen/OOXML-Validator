@@ -9,8 +9,8 @@ namespace OOXMLValidatorCLI.Interfaces
     {
         FileFormatVersions OfficeVersion { get; }
         void SetOfficeVersion(string version);
-        OpenXmlPackage GetDocument(string filePath);
+        OpenXmlPackage GetDocument(string filePath, string fileExtension);
         Tuple<bool, IEnumerable<ValidationErrorInfo>> GetValidationErrors(OpenXmlPackage doc);
-        object GetValidationErrors(Tuple<bool, IEnumerable<ValidationErrorInfo>> data, string filePath, bool returnXml);
+        object GetValidationErrorsData(Tuple<bool, IEnumerable<ValidationErrorInfo>> data, string filePath, bool returnXml);
     }
 }
