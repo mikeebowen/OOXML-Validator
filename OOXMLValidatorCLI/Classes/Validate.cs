@@ -15,12 +15,14 @@ namespace OOXMLValidatorCLI.Classes
         private readonly IFunctionUtils _functionUtils;
         private readonly string[] validFileExtensions = new string[] { ".docx", ".docm", ".dotm", ".dotx", ".pptx", ".pptm", ".potm", ".potx", ".ppam", ".ppsm", ".ppsx", ".xlsx", ".xlsm", ".xltm", ".xltx", ".xlam" };
         private readonly IFileService _fileService;
+        private readonly IDirectoryService _directoryService;
 
 
-        public Validate(IFunctionUtils functionUtils, IFileService fileService)
+        public Validate(IFunctionUtils functionUtils, IFileService fileService, IDirectoryService directoryService)
         {
             _functionUtils = functionUtils;
             _fileService = fileService;
+            _directoryService = directoryService;
         }
         public object OOXML(string filePath, string format, bool returnXml = false, bool recursive = false)
         {
@@ -31,8 +33,8 @@ namespace OOXMLValidatorCLI.Classes
 
             if (fileAttributes.HasFlag(FileAttributes.Directory))
             {
-                IEnumerable<string> files = recursive ? Directory.EnumerateFiles(filePath, "*.*", SearchOption.AllDirectories).Where(f => validFileExtensions.Contains(Path.GetExtension(f)))
-                    : Directory.GetFiles(filePath).Where(f => validFileExtensions.Contains(Path.GetExtension(f)));
+                IEnumerable<string> files = recursive ? _directoryService.EnumerateFiles(filePath, "*.*", SearchOption.AllDirectories).Where(f => validFileExtensions.Contains(Path.GetExtension(f)))
+                    : _directoryService.GetFiles(filePath).Where(f => validFileExtensions.Contains(Path.GetExtension(f)));
 
                 XDocument xDocument = new XDocument(new XElement("Document"));
                 List<object> validationErrorList = new List<object>();
@@ -41,11 +43,11 @@ namespace OOXMLValidatorCLI.Classes
                 {
                     string fileExtension = Path.GetExtension(file);
 
-                    Tuple<bool, IEnumerable<ValidationErrorInfo>> validationErrorInfos = _getValidationErrors(file, fileExtension);
+                    Tuple<bool, IEnumerable<ValidationErrorInfo>> validationTupple = _getValidationErrors(file, fileExtension);
 
-                    if (validationErrorInfos.Item2.Count() > 0)
+                    if (validationTupple.Item2.Count() > 0)
                     {
-                        var data = _functionUtils.GetValidationErrors(validationErrorInfos, file, returnXml);
+                        var data = _functionUtils.GetValidationErrorsData(validationTupple, file, returnXml);
 
                         if (returnXml)
                         {
@@ -80,7 +82,7 @@ namespace OOXMLValidatorCLI.Classes
 
                 Tuple<bool, IEnumerable<ValidationErrorInfo>> validationErrorInfos = _getValidationErrors(filePath, fileExtension);
 
-                return _functionUtils.GetValidationErrors(validationErrorInfos, filePath, returnXml);
+                return _functionUtils.GetValidationErrorsData(validationErrorInfos, filePath, returnXml);
             }
 
         }

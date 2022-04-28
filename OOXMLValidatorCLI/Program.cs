@@ -11,14 +11,17 @@ namespace OOXMLValidatorCLI
         private static void Main(string[] args)
         {
             // set up DI
-            var collection = new ServiceCollection();
+            ServiceCollection collection = new ServiceCollection();
             collection.AddScoped<IValidate, Validate>();
             collection.AddScoped<IFunctionUtils, FunctionUtils>();
             collection.AddScoped<IDocumentUtils, DocumentUtils>();
-            collection.AddSingleton<IFileService, DefaultFileService>();
-            var serviceProvider = collection.BuildServiceProvider();
+            collection.AddSingleton<IFileService, FileService>();
+            collection.AddSingleton<IDirectoryService, DirectoryService>();
 
-            var validate = serviceProvider.GetService<IValidate>();
+            ServiceProvider serviceProvider = collection.BuildServiceProvider();
+
+            IValidate validate = serviceProvider.GetService<IValidate>();
+
             string xmlPath;
             bool returnXml = false;
             string version = null;

@@ -82,7 +82,7 @@ namespace OOXMLValidatorCLI.Classes
             return _documentUtils.Validate(doc, OfficeVersion);
         }
 
-        public object GetValidationErrors(Tuple<bool, IEnumerable<ValidationErrorInfo>> validationInfo, string filePath, bool returnXml)
+        public object GetValidationErrorsData(Tuple<bool, IEnumerable<ValidationErrorInfo>> validationInfo, string filePath, bool returnXml)
         {
             if (!returnXml)
             {

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace OOXMLValidatorCLI.Classes
 {
-    public class DefaultFileService : IFileService
+    public class FileService : IFileService
     {
         public FileAttributes GetAttributes(string path)
         {
