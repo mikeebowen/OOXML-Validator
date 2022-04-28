@@ -7,6 +7,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/mikeebowen/OOXML-Validator</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version>$(VersionPrefix)</Version>
   </PropertyGroup>
 
   <ItemGroup>
