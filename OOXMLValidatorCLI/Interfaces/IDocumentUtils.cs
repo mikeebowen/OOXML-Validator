@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
+using OOXMLValidatorCLI.Classes;
 using System;
 using System.Collections.Generic;
 
@@ -11,6 +12,6 @@ namespace OOXMLValidatorCLI.Interfaces
         WordprocessingDocument OpenWordprocessingDocument(string tempFilePath);
         SpreadsheetDocument OpenSpreadsheetDocument(string tempFilePath);
         PresentationDocument OpenPresentationDocument(string tempFilePath);
-        Tuple<bool, IEnumerable<ValidationErrorInfo>> Validate(OpenXmlPackage doc, FileFormatVersions version);
+        Tuple<bool, IEnumerable<ValidationErrorInfoInternal>> Validate(OpenXmlPackage doc, FileFormatVersions version);
     }
 }

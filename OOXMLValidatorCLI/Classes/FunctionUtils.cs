@@ -77,18 +77,18 @@ namespace OOXMLValidatorCLI.Classes
             }
         }
 
-        public Tuple<bool, IEnumerable<ValidationErrorInfo>> GetValidationErrors(OpenXmlPackage doc)
+        public Tuple<bool, IEnumerable<ValidationErrorInfoInternal>> GetValidationErrors(OpenXmlPackage doc)
         {
             return _documentUtils.Validate(doc, OfficeVersion);
         }
 
-        public object GetValidationErrorsData(Tuple<bool, IEnumerable<ValidationErrorInfo>> validationInfo, string filePath, bool returnXml)
+        public object GetValidationErrorsData(Tuple<bool, IEnumerable<ValidationErrorInfoInternal>> validationInfo, string filePath, bool returnXml)
         {
             if (!returnXml)
             {
                 List<dynamic> res = new List<dynamic>();
 
-                foreach (ValidationErrorInfo validationErrorInfo in validationInfo.Item2)
+                foreach (ValidationErrorInfoInternal validationErrorInfo in validationInfo.Item2)
                 {
                     dynamic dyno = new ExpandoObject();
                     dyno.Description = validationErrorInfo.Description;
@@ -108,13 +108,11 @@ namespace OOXMLValidatorCLI.Classes
             }
             else
             {
-                XElement xml = new XElement("ValidationErrorInfoList");
-                xml.SetAttributeValue("FilePath", filePath);
-                xml.SetAttributeValue("IsStrict", validationInfo.Item1);
+                XElement element = new XElement("ValidationErrorInfoList");
 
-                foreach (ValidationErrorInfo validationErrorInfo in validationInfo.Item2)
+                foreach (ValidationErrorInfoInternal validationErrorInfo in validationInfo.Item2)
                 {
-                    xml.Add(
+                    element.Add(
                         new XElement("ValidationErrorInfo",
                             new XElement("Description", validationErrorInfo.Description),
                             new XElement("Path", validationErrorInfo.Path),
@@ -123,6 +121,10 @@ namespace OOXMLValidatorCLI.Classes
                         )
                     );
                 }
+
+                XElement xml = new XElement("File", element);
+                xml.SetAttributeValue("FilePath", filePath);
+                xml.SetAttributeValue("IsStrict", validationInfo.Item1);
 
                 return new XDocument(xml);
             }
