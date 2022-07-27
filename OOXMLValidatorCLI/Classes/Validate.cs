@@ -24,7 +24,7 @@ namespace OOXMLValidatorCLI.Classes
             _fileService = fileService;
             _directoryService = directoryService;
         }
-        public object OOXML(string filePath, string format, bool returnXml = false, bool recursive = false)
+        public object OOXML(string filePath, string format, bool returnXml = false, bool recursive = false, bool includeValid = false)
         {
 
             _functionUtils.SetOfficeVersion(format);
@@ -43,9 +43,9 @@ namespace OOXMLValidatorCLI.Classes
                 {
                     string fileExtension = Path.GetExtension(file);
 
-                    Tuple<bool, IEnumerable<ValidationErrorInfo>> validationTupple = _getValidationErrors(file, fileExtension);
+                    Tuple<bool, IEnumerable<ValidationErrorInfoInternal>> validationTupple = _getValidationErrors(file, fileExtension);
 
-                    if (validationTupple.Item2.Count() > 0)
+                    if (validationTupple.Item2.Count() > 0 || includeValid)
                     {
                         var data = _functionUtils.GetValidationErrorsData(validationTupple, file, returnXml);
 
@@ -80,18 +80,27 @@ namespace OOXMLValidatorCLI.Classes
                     throw new ArgumentException(string.Concat("file must be have one of these extensions: ", string.Join(", ", validFileExtensions)));
                 }
 
-                Tuple<bool, IEnumerable<ValidationErrorInfo>> validationErrorInfos = _getValidationErrors(filePath, fileExtension);
+                Tuple<bool, IEnumerable<ValidationErrorInfoInternal>> validationErrorInfos = _getValidationErrors(filePath, fileExtension);
 
                 return _functionUtils.GetValidationErrorsData(validationErrorInfos, filePath, returnXml);
             }
 
         }
 
-        private Tuple<bool, IEnumerable<ValidationErrorInfo>> _getValidationErrors(string filePath, string fileExtension)
+        private Tuple<bool, IEnumerable<ValidationErrorInfoInternal>> _getValidationErrors(string filePath, string fileExtension)
         {
-            OpenXmlPackage doc = _functionUtils.GetDocument(filePath, fileExtension);
+            try
+            {
+                OpenXmlPackage doc = _functionUtils.GetDocument(filePath, fileExtension);
 
-            return _functionUtils.GetValidationErrors(doc);
+                return _functionUtils.GetValidationErrors(doc);
+            }
+            catch (Exception ex)
+            {
+                List<ValidationErrorInfoInternal> errors = new List<ValidationErrorInfoInternal> { new ValidationErrorInfoInternal() { Description = ex.Message, ErrorType = "OpenXmlPackageException" } };
+
+                return new Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>(false, errors);
+            }
         }
     }
 }
