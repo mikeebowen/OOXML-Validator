@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2022-07-27
+
+## Added
+
+- Returned XML data returns list of `<File />` elements with a child `<ValidationErrorInfoList />` element, instead of list of `<ValidationErrorInfoList />` elements.
+
+## Fixed
+
+- If a file cannot be opened by the Validator, a `<ValidationErrorInfoInternal />` element is added with the error message.
+
 ## [1.2.0] - 2022-04-28
 
 ### Added
