@@ -108,18 +108,32 @@ namespace OOXMLValidatorCLI.Classes
             }
             else
             {
-                XElement element = new XElement("ValidationErrorInfoList");
+                XElement element;
+                ValidationErrorInfoInternal first = validationInfo.Item2.FirstOrDefault();
 
-                foreach (ValidationErrorInfoInternal validationErrorInfo in validationInfo.Item2)
+                if (first?.ErrorType == "OpenXmlPackageException")
                 {
-                    element.Add(
-                        new XElement("ValidationErrorInfo",
-                            new XElement("Description", validationErrorInfo.Description),
-                            new XElement("Path", validationErrorInfo.Path),
-                            new XElement("Id", validationErrorInfo.Id),
-                            new XElement("ErrorType", validationErrorInfo.ErrorType)
+                    element = new XElement("Exceptions",
+                        new XElement("OpenXmlPackageException",
+                            new XElement("Message", first.Description)
                         )
                     );
+                }
+                else
+                {
+                    element = new XElement("ValidationErrorInfoList");
+
+                    foreach (ValidationErrorInfoInternal validationErrorInfo in validationInfo.Item2)
+                    {
+                        element.Add(
+                            new XElement("ValidationErrorInfo",
+                                new XElement("Description", validationErrorInfo.Description),
+                                new XElement("Path", validationErrorInfo.Path),
+                                new XElement("Id", validationErrorInfo.Id),
+                                new XElement("ErrorType", validationErrorInfo.ErrorType)
+                            )
+                        );
+                    }
                 }
 
                 XElement xml = new XElement("File", element);
