@@ -29,7 +29,7 @@ namespace OOXMLValidatorCLITests
 
             memoryStream.Seek(0, SeekOrigin.Begin);
 
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfoInternal> validationErrorInfos = new List<ValidationErrorInfoInternal>() { new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal() };
 
             Mock.Get(functionUtilsMock).Setup(f => f.GetDocument(It.IsAny<string>(), ".docx")).Returns(testWordDoc);
             Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>()))
@@ -37,13 +37,13 @@ namespace OOXMLValidatorCLITests
                 {
                     Assert.AreEqual(testWordDoc, o);
                 })
-                .Returns(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(true, validationErrorInfos));
+                .Returns(new Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>(true, validationErrorInfos));
 
             validate.OOXML(testPath, testFormat);
 
             Mock.Get(functionUtilsMock).Verify(f => f.SetOfficeVersion(testFormat), Times.Once());
             Mock.Get(functionUtilsMock).Verify(f => f.GetDocument(testPath, ".docx"), Times.Once());
-            Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrorsData(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(true, validationErrorInfos), testPath, false), Times.Once());
+            Mock.Get(functionUtilsMock).Verify(f => f.GetValidationErrorsData(new Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>(true, validationErrorInfos), testPath, false), Times.Once());
         }
         // file must be have one of these extensions: .docx, .docm, .dotm, .dotx, .pptx, .pptm, .potm, .potx, .ppam, .ppsm, .ppsx, .xlsx, .xlsm, .xltm, .xltx, .xlam
         [TestMethod]
@@ -72,14 +72,14 @@ namespace OOXMLValidatorCLITests
             string testFormat = null;
             MemoryStream memoryStream = new MemoryStream();
             using WordprocessingDocument testWordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document);
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfoInternal> validationErrorInfos = new List<ValidationErrorInfoInternal>() { new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal() };
 
             memoryStream.Seek(0, SeekOrigin.Begin);
 
             Mock.Get(fileServiceMock).Setup(f => f.GetAttributes(testPath)).Returns(FileAttributes.Directory);
             Mock.Get(directoryServiceMock).Setup(d => d.GetFiles(testPath)).Returns(new string[] { "taco.docx", "cat.pptx", "foo.xlsx", "bar.docm" });
             Mock.Get(functionUtilsMock).Setup(f => f.GetDocument(It.IsAny<string>(), It.IsAny<string>())).Returns(testWordDoc);
-            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>())).Returns(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(false, validationErrorInfos));
+            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>())).Returns(new Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>(false, validationErrorInfos));
 
             object validationErrors = validate.OOXML(testPath, testFormat, false, false);
             Assert.IsNotNull(validationErrors);
@@ -98,7 +98,7 @@ namespace OOXMLValidatorCLITests
             string testFormat = null;
             MemoryStream memoryStream = new MemoryStream();
             using WordprocessingDocument testWordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document);
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfoInternal> validationErrorInfos = new List<ValidationErrorInfoInternal>() { new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal() };
             memoryStream.Seek(0, SeekOrigin.Begin);
 
             XDocument testXDocument = new XDocument(new XElement("Document"));
@@ -121,8 +121,8 @@ namespace OOXMLValidatorCLITests
             Mock.Get(fileServiceMock).Setup(f => f.GetAttributes(testPath)).Returns(FileAttributes.Directory);
             Mock.Get(directoryServiceMock).Setup(d => d.GetFiles(testPath)).Returns(new string[] { "taco.docx", "cat.pptx", "foo.xlsx", "bar.docm" });
             Mock.Get(functionUtilsMock).Setup(f => f.GetDocument(It.IsAny<string>(), It.IsAny<string>())).Returns(testWordDoc);
-            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>())).Returns(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(false, validationErrorInfos));
-            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrorsData(It.IsAny<Tuple<bool, IEnumerable<ValidationErrorInfo>>>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new XDocument(testXml));
+            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>())).Returns(new Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>(false, validationErrorInfos));
+            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrorsData(It.IsAny<Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new XDocument(testXml));
 
             object validationErrorXml = validate.OOXML(testPath, testFormat, true, false);
 
@@ -141,7 +141,7 @@ namespace OOXMLValidatorCLITests
             string testFormat = null;
             MemoryStream memoryStream = new MemoryStream();
             using WordprocessingDocument testWordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document);
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfoInternal> validationErrorInfos = new List<ValidationErrorInfoInternal>() { new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal() };
 
             memoryStream.Seek(0, SeekOrigin.Begin);
 
@@ -149,7 +149,7 @@ namespace OOXMLValidatorCLITests
             Mock.Get(directoryServiceMock).Setup(d => d.GetFiles(testPath)).Returns(new string[] { "taco.docx", "cat.pptx", "foo.xlsx", "bar.docm" });
             Mock.Get(directoryServiceMock).Setup(d => d.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(new string[] { "taco.docx", "cat.pptx", "foo.xlsx", "bar.docm" });
             Mock.Get(functionUtilsMock).Setup(f => f.GetDocument(It.IsAny<string>(), It.IsAny<string>())).Returns(testWordDoc);
-            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>())).Returns(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(false, validationErrorInfos));
+            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>())).Returns(new Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>(false, validationErrorInfos));
 
             object validationErrors = validate.OOXML(testPath, testFormat, false, true);
             Assert.IsNotNull(validationErrors);
@@ -169,7 +169,7 @@ namespace OOXMLValidatorCLITests
             string testFormat = null;
             MemoryStream memoryStream = new MemoryStream();
             using WordprocessingDocument testWordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document);
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfoInternal> validationErrorInfos = new List<ValidationErrorInfoInternal>() { new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal() };
 
             memoryStream.Seek(0, SeekOrigin.Begin);
 
@@ -177,7 +177,7 @@ namespace OOXMLValidatorCLITests
             Mock.Get(directoryServiceMock).Setup(d => d.GetFiles(testPath)).Returns(new string[] { "taco.docx", "cat.pptx", "foo.xlsx", "bar.docm" });
             Mock.Get(directoryServiceMock).Setup(d => d.EnumerateFiles(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOption>())).Returns(new string[] { "taco.docx", "cat.pptx", "foo.xlsx", "bar.docm" });
             Mock.Get(functionUtilsMock).Setup(f => f.GetDocument(It.IsAny<string>(), It.IsAny<string>())).Returns(testWordDoc);
-            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>())).Returns(new Tuple<bool, IEnumerable<ValidationErrorInfo>>(false, validationErrorInfos));
+            Mock.Get(functionUtilsMock).Setup(f => f.GetValidationErrors(It.IsAny<OpenXmlPackage>())).Returns(new Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>(false, validationErrorInfos));
 
             object validationErrors = validate.OOXML(testPath, testFormat, false, false);
             Assert.IsNotNull(validationErrors);

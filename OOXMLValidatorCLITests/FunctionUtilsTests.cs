@@ -131,9 +131,9 @@ namespace OOXMLValidatorCLITests
         [TestMethod]
         public void GetValidationErrorsData_ShouldReturnValidJson()
         {
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfoInternal> validationErrorInfos = new List<ValidationErrorInfoInternal>() { new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal() };
             var documentMock = Mock.Of<IDocumentUtils>();
-            string testJson = "\"[{\\\"Description\\\":\\\"\\\",\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":0},{\\\"Description\\\":\\\"\\\",\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":0},{\\\"Description\\\":\\\"\\\",\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":0}]\"";
+            string testJson = "\"[{\\\"Description\\\":null,\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":null},{\\\"Description\\\":null,\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":null},{\\\"Description\\\":null,\\\"Path\\\":null,\\\"Id\\\":null,\\\"ErrorType\\\":null}]\"";
 
 
             var functionUtils = new FunctionUtils(documentMock);
@@ -146,9 +146,9 @@ namespace OOXMLValidatorCLITests
         [TestMethod]
         public void GetValidationErrorsData_ShouldReturnValidXml()
         {
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfoInternal> validationErrorInfos = new List<ValidationErrorInfoInternal>() { new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal() };
             var documentMock = Mock.Of<IDocumentUtils>();
-            string xmlString = "<ValidationErrorInfoList FilePath='C:\\test\\file\\path.xlsx' IsStrict='true'><ValidationErrorInfo><Description></Description><Path/><Id/><ErrorType>Schema</ErrorType></ValidationErrorInfo><ValidationErrorInfo><Description></Description><Path/><Id/><ErrorType>Schema</ErrorType></ValidationErrorInfo><ValidationErrorInfo><Description></Description><Path/><Id/><ErrorType>Schema</ErrorType></ValidationErrorInfo></ValidationErrorInfoList>";
+            string xmlString = "<File FilePath=\"C:\\test\\file\\path.xlsx\" IsStrict=\"true\"><ValidationErrorInfoList><ValidationErrorInfo><Description /><Path /><Id /><ErrorType /></ValidationErrorInfo><ValidationErrorInfo><Description /><Path /><Id /><ErrorType /></ValidationErrorInfo><ValidationErrorInfo><Description /><Path /><Id /><ErrorType /></ValidationErrorInfo></ValidationErrorInfoList></File>";
             XDocument xDoc = XDocument.Parse(xmlString);
 
             var functionUtils = new FunctionUtils(documentMock);
@@ -160,7 +160,7 @@ namespace OOXMLValidatorCLITests
         [TestMethod]
         public void GetValidationErrors_ShouldCallValidate()
         {
-            IEnumerable<ValidationErrorInfo> validationErrorInfos = new List<ValidationErrorInfo>() { new ValidationErrorInfo(), new ValidationErrorInfo(), new ValidationErrorInfo() };
+            IEnumerable<ValidationErrorInfoInternal> validationErrorInfos = new List<ValidationErrorInfoInternal>() { new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal(), new ValidationErrorInfoInternal() };
             var testTup = Tuple.Create(true, validationErrorInfos);
             var documentMock = Mock.Of<IDocumentUtils>();
 
