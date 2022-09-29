@@ -26,12 +26,13 @@ namespace OOXMLValidatorCLI.Classes
         {
             OpenXmlValidator openXmlValidator = new OpenXmlValidator(version);
             bool isStrict = doc.StrictRelationshipFound;
+
             IEnumerable<ValidationErrorInfoInternal> errors = openXmlValidator.Validate(doc).Select(e => new ValidationErrorInfoInternal
             {
                 ErrorType = e.ErrorType.ToString(),
                 Description = e.Description,
                 Path = e.Path.ToString(),
-                Id = e.Id.ToString()
+                Id = e.Id.ToString(),
             });
 
             return new Tuple<bool, IEnumerable<ValidationErrorInfoInternal>>(isStrict, errors);
