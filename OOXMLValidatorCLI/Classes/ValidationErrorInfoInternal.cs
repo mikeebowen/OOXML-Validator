@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Office.CoverPageProps;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Office.CoverPageProps;
 using DocumentFormat.OpenXml.Validation;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace OOXMLValidatorCLI.Classes
     {
         public string ErrorType { get; set; }
         public string Description { get; set; }
-        public string Path { get; set; }
+        public XmlPath Path { get; set; }
         public string Id { get; set; }
     }
 }
