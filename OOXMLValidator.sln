@@ -1,14 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31005.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34414.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OOXMLValidatorCLI", "OOXMLValidatorCLI\OOXMLValidatorCLI.csproj", "{992EF2AC-EDE5-4418-9584-E077999FD15E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OOXMLValidatorCLITests", "OOXMLValidatorCLITests\OOXMLValidatorCLITests.csproj", "{F5C0C69F-A8A2-4612-A2EE-3A15565C8FA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OOXMLValidatorCLITests", "OOXMLValidatorCLITests\OOXMLValidatorCLITests.csproj", "{F5C0C69F-A8A2-4612-A2EE-3A15565C8FA8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E8B33E39-2324-4289-9F3B-697CBBAC64B3}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		LICENSE = LICENSE
