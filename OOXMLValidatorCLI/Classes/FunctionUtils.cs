@@ -88,7 +88,7 @@ namespace OOXMLValidatorCLI.Classes
         /// <param name="v">The string representation of the Office version.</param>
         public void SetOfficeVersion(string v)
         {
-            if (v != null && Enum.TryParse(v, out FileFormatVersions version))
+            if (v is not null && Enum.TryParse(v, out FileFormatVersions version))
             {
                 this.fileFormatVersions = version;
             }

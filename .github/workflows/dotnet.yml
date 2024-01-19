@@ -8,14 +8,13 @@ on:
 env:
   AZURE_FUNCTIONAPP_NAME: OOXMLValidator  # set this to your application's name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'    # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '6.0.x'              # set this to the dotnet version to use
+  DOTNET_VERSION: '8.0.x'              # set this to the dotnet version to use
 
 jobs:
   test:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        node-version: [14.x, 16.x, 18.x]
     runs-on: ${{ matrix.os }}
     environment: dev
 
