@@ -1,34 +1,52 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Validation;
-using Newtonsoft.Json;
-using OOXMLValidatorCLI.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Xml.Linq;
+﻿// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace OOXMLValidatorCLI.Classes
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.Linq;
+    using System.Xml.Linq;
+    using DocumentFormat.OpenXml;
+    using DocumentFormat.OpenXml.Packaging;
+    using Newtonsoft.Json;
+    using OOXMLValidatorCLI.Interfaces;
+
+    /// <summary>
+    /// Utility class for performing various functions related to Open XML documents.
+    /// </summary>
     public class FunctionUtils : IFunctionUtils
     {
-        private readonly IDocumentUtils _documentUtils;
-        private FileFormatVersions? _fileFormatVersions;
+        private readonly IDocumentUtils documentUtils;
+        private FileFormatVersions? fileFormatVersions;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FunctionUtils"/> class.
+        /// </summary>
+        /// <param name="documentUtils">The document utility object.</param>
+        public FunctionUtils(IDocumentUtils documentUtils)
+        {
+            this.documentUtils = documentUtils;
+            this.fileFormatVersions = null;
+        }
+
+        /// <summary>
+        /// Gets the maximum supported Office version based on the available FileFormatVersions.
+        /// </summary>
         public FileFormatVersions OfficeVersion
         {
             get
             {
-                return _fileFormatVersions ?? Enum.GetValues(typeof(FileFormatVersions)).Cast<FileFormatVersions>().Max();
+                return this.fileFormatVersions ?? Enum.GetValues(typeof(FileFormatVersions)).Cast<FileFormatVersions>().Max();
             }
         }
-        public FunctionUtils(IDocumentUtils documentUtils)
-        {
-            _documentUtils = documentUtils;
-            _fileFormatVersions = null;
-        }
 
+        /// <summary>
+        /// Gets the OpenXmlPackage object for the specified file.
+        /// </summary>
+        /// <param name="filePath">The path of the file.</param>
+        /// <param name="fileExtension">The extension of the file.</param>
+        /// <returns>The OpenXmlPackage object.</returns>
         public OpenXmlPackage GetDocument(string filePath, string fileExtension)
         {
             OpenXmlPackage doc = null;
@@ -39,7 +57,7 @@ namespace OOXMLValidatorCLI.Classes
                 case ".docm":
                 case ".dotm":
                 case ".dotx":
-                    doc = _documentUtils.OpenWordprocessingDocument(filePath);
+                    doc = this.documentUtils.OpenWordprocessingDocument(filePath);
                     break;
                 case ".pptx":
                 case ".pptm":
@@ -48,14 +66,14 @@ namespace OOXMLValidatorCLI.Classes
                 case ".ppam":
                 case ".ppsm":
                 case ".ppsx":
-                    doc = _documentUtils.OpenPresentationDocument(filePath);
+                    doc = this.documentUtils.OpenPresentationDocument(filePath);
                     break;
                 case ".xlsx":
                 case ".xlsm":
                 case ".xltm":
                 case ".xltx":
                 case ".xlam":
-                    doc = _documentUtils.OpenSpreadsheetDocument(filePath);
+                    doc = this.documentUtils.OpenSpreadsheetDocument(filePath);
                     break;
                 default:
                     break;
@@ -64,24 +82,40 @@ namespace OOXMLValidatorCLI.Classes
             return doc;
         }
 
+        /// <summary>
+        /// Sets the Office version based on the provided string value.
+        /// </summary>
+        /// <param name="v">The string representation of the Office version.</param>
         public void SetOfficeVersion(string v)
         {
-            if (v != null && Enum.TryParse(v, out FileFormatVersions version))
+            if (v is not null && Enum.TryParse(v, out FileFormatVersions version))
             {
-                _fileFormatVersions = version;
+                this.fileFormatVersions = version;
             }
             else
             {
                 FileFormatVersions currentVersion = Enum.GetValues(typeof(FileFormatVersions)).Cast<FileFormatVersions>().Last();
-                _fileFormatVersions = currentVersion;
+                this.fileFormatVersions = currentVersion;
             }
         }
 
+        /// <summary>
+        /// Validates the specified OpenXmlPackage object and returns the validation errors.
+        /// </summary>
+        /// <param name="doc">The OpenXmlPackage object to validate.</param>
+        /// <returns>A tuple containing a boolean value indicating if the validation is strict and a collection of validation error information.</returns>
         public Tuple<bool, IEnumerable<ValidationErrorInfoInternal>> GetValidationErrors(OpenXmlPackage doc)
         {
-            return _documentUtils.Validate(doc, OfficeVersion);
+            return this.documentUtils.Validate(doc, this.OfficeVersion);
         }
 
+        /// <summary>
+        /// Gets the validation errors data in the specified format.
+        /// </summary>
+        /// <param name="validationInfo">The validation information.</param>
+        /// <param name="filePath">The path of the file.</param>
+        /// <param name="returnXml">A boolean value indicating if the data should be returned in XML format.</param>
+        /// <returns>The validation errors data.</returns>
         public object GetValidationErrorsData(Tuple<bool, IEnumerable<ValidationErrorInfoInternal>> validationInfo, string filePath, bool returnXml)
         {
             if (!returnXml)
@@ -98,11 +132,13 @@ namespace OOXMLValidatorCLI.Classes
                     res.Add(dyno);
                 }
 
-                string json = JsonConvert.SerializeObject(res, Formatting.None,
-                            new JsonSerializerSettings()
-                            {
-                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                            });
+                string json = JsonConvert.SerializeObject(
+                    res,
+                    Formatting.None,
+                    new JsonSerializerSettings()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    });
 
                 return json;
             }
@@ -113,11 +149,11 @@ namespace OOXMLValidatorCLI.Classes
 
                 if (first?.ErrorType == "OpenXmlPackageException")
                 {
-                    element = new XElement("Exceptions",
-                        new XElement("OpenXmlPackageException",
-                            new XElement("Message", first.Description)
-                        )
-                    );
+                    element = new XElement(
+                        "Exceptions",
+                        new XElement(
+                            "OpenXmlPackageException",
+                            new XElement("Message", first.Description)));
                 }
                 else
                 {
@@ -126,13 +162,12 @@ namespace OOXMLValidatorCLI.Classes
                     foreach (ValidationErrorInfoInternal validationErrorInfo in validationInfo.Item2)
                     {
                         element.Add(
-                            new XElement("ValidationErrorInfo",
+                            new XElement(
+                                "ValidationErrorInfo",
                                 new XElement("Description", validationErrorInfo.Description),
                                 new XElement("Path", validationErrorInfo.Path),
                                 new XElement("Id", validationErrorInfo.Id),
-                                new XElement("ErrorType", validationErrorInfo.ErrorType)
-                            )
-                        );
+                                new XElement("ErrorType", validationErrorInfo.ErrorType)));
                     }
                 }
 

@@ -1,15 +1,25 @@
-using DocumentFormat.OpenXml;
-using Microsoft.Extensions.DependencyInjection;
-using OOXMLValidatorCLI.Classes;
-using OOXMLValidatorCLI.Interfaces;
-using System;
-using System.Threading;
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+OOXMLValidatorCLI.Program.Start(args);
 
 namespace OOXMLValidatorCLI
 {
-    class Program
+    using System;
+    using DocumentFormat.OpenXml;
+    using Microsoft.Extensions.DependencyInjection;
+    using OOXMLValidatorCLI.Classes;
+    using OOXMLValidatorCLI.Interfaces;
+
+    /// <summary>
+    /// Represents the program's entry point.
+    /// </summary>
+    public class Program
     {
-        private static void Main(string[] args)
+        /// <summary>
+        /// Entry point of the application.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        public static void Start(string[] args)
         {
             try
             {
@@ -31,7 +41,7 @@ namespace OOXMLValidatorCLI
                 bool recursive = false;
                 bool includeValid = false;
 
-                if (args != null && args.Length > 0)
+                if (args is not null && args.Length > 0)
                 {
                     xmlPath = args[0];
 
