@@ -7,35 +7,35 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.1.2] - 2024-01-23
 
-## Updated
+### Updated
 - Build for dotnet 6, 7, and 8
 
 ## [2.1.1] - 2024-01-22
 
-## Updated
+### Updated
 
 - Updated to OOXML SDK 3.0
 - Updated to dotnet 8
 
 ## [2.1.1] - 2022-10-27
 
-## Fixed
+### Fixed
 
 - Update Path property on ValidationErrorInfoInternal to have type XmlPath
 
 ## [2.1.0] - 2022-09-29
 
-## Added
+### Added
 
 - Updated Open XML SDK Version
 
 ## [2.0.0] - 2022-07-27
 
-## Added
+### Added
 
 - Returned XML data returns list of `<File />` elements with a child `<ValidationErrorInfoList />` element, instead of list of `<ValidationErrorInfoList />` elements.
 
-## Fixed
+### Fixed
 
 - If a file cannot be opened by the Validator, a `<ValidationErrorInfoInternal />` element is added with the error message.
 
