@@ -23,7 +23,6 @@ jobs:
           - windows-latest
         dotnet-version:
           - 6.x
-          - 7.x
           - 8.x
     runs-on: ${{ matrix.os }}
 

@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.1.2] - 2024-01-23
 
 ### Updated
-- Build for dotnet 6, 7, and 8
+- Add build for dotnet 8
 
 ## [2.1.1] - 2024-01-22
 
