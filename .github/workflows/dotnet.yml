@@ -3,8 +3,12 @@ name: OOXMLValidator Tests
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
 env:
   AZURE_FUNCTIONAPP_NAME: OOXMLValidator  # set this to your application's name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'    # set this to the path to your web app project, defaults to the repository root
