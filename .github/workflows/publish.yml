@@ -1,0 +1,58 @@
+name: OOXMLValidator Publish
+
+on:
+  push:
+    branches: [main, feature/added-publish-action]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+env:
+  AZURE_FUNCTIONAPP_NAME: OOXMLValidator  # set this to your application's name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'    # set this to the path to your web app project, defaults to the repository root
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup DotNet 8.x Environment
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.x
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build/linux-x64
+        run: dotnet publish --framework net8.0 -c Release -r linux-x64 -p:IncludeNativeLibrariesForSelfExtract=true -p:InvariantGlobalization=true OOXMLValidator.sln
+      - name: Build/linux-arm64
+        run: dotnet publish --framework net8.0 -c Release -r linux-arm64 -p:IncludeNativeLibrariesForSelfExtract=true -p:InvariantGlobalization=true OOXMLValidator.sln
+      - name: Build/osx-x64
+        run: dotnet publish --framework net8.0 -c Release -r osx-x64 OOXMLValidator.sln
+      - name: Build/win-x64
+        run: dotnet publish --framework net8.0 -c Release -r win-x64 OOXMLValidator.sln
+
+      - name: Artifacts/linux-x64
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-linux-x64
+          path: ./OOXMLValidatorCLI/bin/Release/net8.0/linux-x64/publish/OOXMLValidatorCLI
+      - name: Artifacts/linux-arm64
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-linux-arm64
+          path: ./OOXMLValidatorCLI/bin/Release/net8.0/linux-arm64/publish/OOXMLValidatorCLI
+      - name: Artifacts/osx-x64
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-osx-x64
+          path: ./OOXMLValidatorCLI/bin/Release/net8.0/osx-x64/publish/OOXMLValidatorCLI
+      - name: Artifacts/win-x64
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-win-x64
+          path: ./OOXMLValidatorCLI/bin/Release/net8.0/win-x64/publish/OOXMLValidatorCLI.exe
+        
