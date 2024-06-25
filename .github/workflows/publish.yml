@@ -18,6 +18,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        build_env: ["linux-x64", "linux-arm64", "osx-x64", "osx-arm64", "win-x64"]
+
     steps:
       - uses: actions/checkout@v4
       - name: Setup DotNet 8.x Environment
@@ -27,40 +31,47 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
 
-      - name: Build/linux-x64
-        run: dotnet publish --framework net8.0 -c Release -r linux-x64 -p:IncludeNativeLibrariesForSelfExtract=true -p:InvariantGlobalization=true OOXMLValidator.sln
-      - name: Build/linux-arm64
-        run: dotnet publish --framework net8.0 -c Release -r linux-arm64 -p:IncludeNativeLibrariesForSelfExtract=true -p:InvariantGlobalization=true OOXMLValidator.sln
-      - name: Build/osx-x64
-        run: dotnet publish --framework net8.0 -c Release -r osx-x64 OOXMLValidator.sln
-      - name: Build/osx-arm64
-        run: dotnet publish --framework net8.0 -c Release -r osx-arm64 OOXMLValidator.sln
-      - name: Build/win-x64
-        run: dotnet publish --framework net8.0 -c Release -r win-x64 OOXMLValidator.sln
+      - name: Build/${{ matrix.build_env }}
+        run: ./dev.sh build ${{ matrix.build_env }}
 
-      - name: Artifacts/linux-x64
+      - name: Artifacts/${{ matrix.build_env }}
         uses: actions/upload-artifact@v4
         with:
-          name: build-linux-x64
-          path: ./OOXMLValidatorCLI/bin/Release/net8.0/linux-x64/publish/OOXMLValidatorCLI
-      - name: Artifacts/linux-arm64
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-linux-arm64
-          path: ./OOXMLValidatorCLI/bin/Release/net8.0/linux-arm64/publish/OOXMLValidatorCLI
-      - name: Artifacts/osx-x64
-        uses: actions/upload-artifact@v4
+          name: build-${{ matrix.build_env }}
+          path: |
+            ./OOXMLValidatorCLI/bin/Release/net8.0/${{ matrix.build_env }}/publish/OOXMLValidatorCLI
+            ./OOXMLValidatorCLI/bin/Release/net8.0/${{ matrix.build_env }}/publish/OOXMLValidatorCLI.exe
+        
+  publish-test-osx-x64:
+    needs: publish
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
           name: build-osx-x64
-          path: ./OOXMLValidatorCLI/bin/Release/net8.0/osx-x64/publish/OOXMLValidatorCLI
-      - name: Artifacts/osx-arm64
-        uses: actions/upload-artifact@v4
+          path: ./test-ci
+      - run: CI_SHELL_OVERRIDE=test-ci ./dev.sh test osx-x64
+
+  publish-test-linux:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
-          name: build-osx-arm64
-          path: ./OOXMLValidatorCLI/bin/Release/net8.0/osx-arm64/publish/OOXMLValidatorCLI
-      - name: Artifacts/win-x64
-        uses: actions/upload-artifact@v4
+          name: build-linux-x64
+          path: ./test-ci
+      - run: CI_SHELL_OVERRIDE=test-ci ./dev.sh test linux-x64
+
+  publish-test-windows:
+    needs: publish
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
           name: build-win-x64
-          path: ./OOXMLValidatorCLI/bin/Release/net8.0/win-x64/publish/OOXMLValidatorCLI.exe
-        
+          path: ./test-ci
+      - shell: bash
+        run: CI_SHELL_OVERRIDE=test-ci ./dev.sh test win-x64
