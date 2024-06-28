@@ -75,3 +75,45 @@ jobs:
           path: ./test-ci
       - shell: bash
         run: CI_SHELL_OVERRIDE=test-ci ./dev.sh test win-x64
+
+  release:
+    name: release
+    needs: [publish, publish-test-osx-x64, publish-test-linux, publish-test-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-linux-x64
+          path: build-linux-x64
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-linux-arm64
+          path: build-linux-arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-osx-x64
+          path: build-osx-x64
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-osx-arm64
+          path: build-osx-arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-win-x64
+          path: build-win-x64
+      - run: |
+          cd build-linux-x64 && zip -r ../linux-x64.zip * && cd -
+          cd build-linux-arm64 && zip -r ../linux-arm64.zip * && cd -
+          cd build-osx-x64 && zip -r ../osx-x64.zip * && cd -
+          cd build-osx-arm64 && zip -r ../osx-arm64.zip * && cd -
+          cd build-win-x64 && zip -r ../win-x64.zip * && cd -
+      - name: release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            linux-x64.zip
+            linux-arm64.zip
+            osx-x64.zip
+            osx-arm64.zip
+            win-x64.zip
