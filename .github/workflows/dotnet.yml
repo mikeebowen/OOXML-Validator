@@ -17,12 +17,11 @@ jobs:
   test:
     strategy:
       matrix:
-        os: 
+        os:
           - macos-latest
           - ubuntu-latest
           - windows-latest
         dotnet-version:
-          - 6.x
           - 8.x
     runs-on: ${{ matrix.os }}
 
@@ -38,4 +37,4 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Test
         run: dotnet test ./OOXMLValidatorCLITests/OOXMLValidatorCLITests.csproj --no-restore --verbosity normal
-        
+
