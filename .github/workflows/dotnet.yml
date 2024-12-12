@@ -22,19 +22,16 @@ jobs:
           - ubuntu-latest
           - windows-latest
         dotnet-version:
-          - 9.x
           - 8.x
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
       - name: Setup DotNet ${{ matrix.dotnet-version }} Environment
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         id: setup-dotnet
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-      - name: Create temporary global.json
-        run: echo '{"sdk":{"version":"${{steps.setup-dotnet.outputs.dotnet-version}}"}}' > ./global.json
       - name: Install dependencies
         run: dotnet restore
       - name: Build
