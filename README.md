@@ -64,3 +64,15 @@ If you don't want to install `dotnet` just run the following to start a containe
 ./dev.sh docker
 # root@8b0f1aad055c:/code# [RUN YOUR COMMANDS HERE]
 ```
+
+### OSX with Apple Silicon (M1, M2, M3, etc chip)
+
+1. use the docker method from above to start the project
+2. from the docker CLI run the build for linux-arm64:
+
+`root@8b0f1aad055c:/code# ./dev.sh build linux-arm64`
+
+Use the CLI by calling:
+
+`root@8b0f1aad055c:/code# ./dev.sh run linux-arm64 [other-options]`
+
